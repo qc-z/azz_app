@@ -1,0 +1,138 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>系统设置</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link href="css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="css/style.css" />
+	<script src="js/zepto.min.js"></script>
+	<script src="js/bbmis.js"></script>
+	<script type="application/javascript"  src="js/hkJS.js"></script>
+</head>
+
+<body>
+	<!--页面主内容区开始-->
+	<div class="mui-page-content">
+		<div class="mui-scroll">
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell info-title">消息设置</li>
+				<li class="mui-table-view-cell">
+					新消息提醒
+					<div class="mui-switch mui-switch-mini mui-active" id="mess_btn">
+					 	<div class="mui-switch-handle"></div>
+					</div>
+				</li>
+				<li class="mui-table-view-cell" id="hiddenSurface">
+					关注提醒
+					<div class="mui-switch mui-switch-mini mui-active" id="follow_btn">
+					 	<div class="mui-switch-handle"></div>
+					</div>
+				</li>
+				<li class="mui-table-view-cell info-title">账户基本资料</li>
+				<li class="mui-table-view-cell" id="hiddenAtten">
+					资料投放
+					<div class="mui-switch mui-switch-mini mui-active" id="delivery_btn">
+					 	<div class="mui-switch-handle"></div>
+					</div>
+				</li>
+				<li class="mui-table-view-cell" id="editPass">
+			        <a class="mui-navigate-right">修改密码</a>
+			    </li>
+			</ul>
+		</div>
+	</div>
+	<!--页面主内容区结束-->
+
+<script src="js/mui.min.js"></script>
+<script src="js/mui.view.js "></script>
+<script type="text/javascript">
+	mui.init();
+	$(function(){
+		getInterface().initDataWithArray("#FFFFFF","back","消息提醒设置","","","#333333","","");
+	})
+	function leftBtnClick(){
+		getInterface().leftBtnClick();
+	}
+
+	getInterface().post_action("getInfo",JSON.stringify({userId:""}),"get");
+	//是否投放
+	var flag1 = $('#delivery_btn').hasClass('mui-active');//储存当前的状态
+	var flag2 = $('#follow_btn').hasClass('mui-active');
+	var flag3 = $('#mess_btn').hasClass('mui-active');
+
+	$('#delivery_btn').on("tap",function(){
+		if($('#delivery_btn').hasClass('mui-active') == false && flag1 == true){
+			flag1 = false;
+		}
+		if($('#delivery_btn').hasClass('mui-active') == true && flag1 == false){
+			flag1 = true;
+		}
+		if($('#delivery_btn').hasClass('mui-active') == flag1){
+			if(flag1){
+				getInterface().post_action('listSet',JSON.stringify({status:'yes'}),'post');
+			}else{
+				getInterface().post_action('listSet',JSON.stringify({status:'no'}),'post');
+			}
+		}
+	});
+	$('#follow_btn').on("tap",function(){
+		if($('#follow_btn').hasClass('mui-active') == false && flag2 == true){
+			flag2 = false;
+		}
+		if($('#follow_btn').hasClass('mui-active') == true && flag2 == false){
+			flag2 = true;
+		}
+		if($('#follow_btn').hasClass('mui-active') == flag2){
+			if(flag2){
+				getInterface().post_action('soundCare',JSON.stringify({status:'yes'}),'post');
+			}else{
+				getInterface().post_action('soundCare',JSON.stringify({status:'no'}),'post');
+			}
+		}
+	});
+	$('#mess_btn').on("tap",function(){
+		if($('#mess_btn').hasClass('mui-active') == false && flag3 == true){
+			flag3 = false;
+		}
+		if($('#mess_btn').hasClass('mui-active') == true && flag3 == false){
+			flag3 = true;
+		}
+		if($('#mess_btn').hasClass('mui-active') == flag3){
+			if(flag3){
+				getInterface().post_action('soundChat',JSON.stringify({status:'yes'}),'post');
+			}else{
+				getInterface().post_action('soundChat',JSON.stringify({status:'no'}),'post');
+			}
+		}
+	});
+
+	function return_action(data,data2){
+		if(data2=="listSet"){
+		}else if(data2=="soundCare"){
+		}else if(data2=="soundChat"){
+		}else{
+			if(data.result.traceid.listSet){
+				$('#delivery_btn').addClass('mui-active')
+			}else{
+				$('#delivery_btn').removeClass('mui-active')
+			}
+			if(data.result.traceid.soundCare){
+				$('#follow_btn').addClass('mui-active')
+			}else{
+				$('#follow_btn').removeClass('mui-active')
+			}
+			if(data.result.traceid.soundChat){
+				$('#mess_btn').addClass('mui-active')
+			}else{
+				$('#mess_btn').removeClass('mui-active')
+			}
+		}
+	}
+	$('#editPass').on('tap',function(){
+		getInterface().html_jump_href(service+'/editPass.html', 'none');
+	})
+</script>
+</body>
+
+</html>

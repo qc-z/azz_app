@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>举报原因</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <link href="css/mui.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="js/zepto.min.js"></script>
+    <script src="js/bbmis.js"></script>
+    <script type="application/javascript"  src="js/hkJS.js"></script>
+</head>
+
+<body>
+
+<div class="mui-content ">
+    <ul class="mui-table-view">
+        <li class="mui-table-view-cell report-item">
+            <a class="mui-navigate-right">发布不正当内容造成骚扰</a>
+        </li>
+        <li class="mui-table-view-cell report-item">
+            <a class="mui-navigate-right">存在欺诈骗钱行为</a>
+        </li>
+        <li class="mui-table-view-cell" id="other">
+            <a class="mui-navigate-right">其他原因</a>
+        </li>
+    </ul>
+
+</div>
+<script src="js/mui.min.js"></script>
+<script>
+    $(function(){
+        getInterface().initDataWithArray("#FFFFFF","back","举报原因","","","#333333","","");
+    })
+    function leftBtnClick(){
+        getInterface().leftBtnClick();
+    }
+    var userId = getQueryString('userId')[0].split('=')[1];
+    $('.mui-table-view').on('tap','.report-item',function(){
+        var btnArray = ['取消', '确定'];
+        var content = '';
+        content = $(this).find('a').text();
+        mui.confirm($(this).find('a').text(), '举报', btnArray, function(e) {
+            // e.preventDefault();
+            if (e.index == 1) {
+                getInterface().post_action('report',JSON.stringify({content: content,imgUrl: "",id: userId}),'post');
+            }else {
+
+            }
+        })
+        console.log($(this).find('a').text())
+    })
+
+    function return_action(data,data2){
+        if( data2=='report' ){
+            if(data.ret == 1){
+                getInterface().msg_alert("举报成功，我们将在24小时内给您回复！");
+            }
+        }
+    }
+
+    // 跳转到其他原因
+    $('#other').on('tap',function(){
+        getInterface().html_jump_href(service+'/otherReasons.html?userId='+userId, 'no');
+    })
+</script>
+</body>
+</html>

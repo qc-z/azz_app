@@ -1,0 +1,675 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>宠爱 面向高端人群的甜蜜社交应用</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="format-detection" content="telephone=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link href="css/mui.picker.min.css" rel="stylesheet" />
+		<link href="css/mui.poppicker.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="css/style.css"/>
+		<script src="js/bbmis.js"></script>
+		<style type="text/css">
+			.mark{
+				width: 100%;
+				height:100rem;
+				background-color: rgba(0,0,0,.7);
+				position:absolute;
+				top: 0%;
+			}
+
+			.userInfo {
+				z-index: 999;
+				position: fixed;
+			}
+			.mui-picker-inner {
+				font-size: 22rem;
+			}
+		</style>
+	</head>
+
+	<body class="whiteBg">
+		<div class="mui-content noBg" id="noBg">
+			<!-- <a href="" id="goto">
+				<div class="userInfo">
+					<img class="userPhoto" src="" />
+					<div id="">
+						<div class="user-name"><span id=nickname></span><span class="flag-vip">高级会员</span></div>
+						<p class="info"></p>
+					</div>
+				</div>
+			</a> -->
+			<div class="mui-scroll-wrapper" id="mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<div class="chatBox" id="chatBox">
+						<!-- Left -->
+						<!-- <div class="sender">
+							<div>
+								<img src="">
+							</div>
+							<div>
+								<div class="left_triangle"></div>
+								<span class="mess"></span>
+							</div>
+						</div> -->
+						<!-- 分割线 -->
+						<div class="cut-off"></div>
+						<!-- Right -->
+						<!-- <div class="receiver">
+							<div>
+								<img src="">
+							</div>
+							<div>
+								<div class="right_triangle"></div>
+								<span class="mess"></span>
+							</div>
+						</div> -->
+
+						<!-- 请求查看私照 -->
+						<!-- <div class="response">
+							<span class="text-primary"></span>
+							<div>
+								<button class="btn-agree">同意</button>
+								<button class="btn-reply">拒绝</button>
+							</div>
+							<p class="priTime"></p>
+						</div> -->
+					</div>
+				</div>
+			</div>
+
+			<div class="input-box" id="input-box">
+				<textarea placeholder="遇到违规用户请点击右上角举报" id="userResult" autofocus="autofocus"></textarea>
+				<div class="btn-group">
+					<button class="send" type='button'>发送</button>
+					<button class="quickReply" id="quickReply" type='button'>快速回复</button>
+				</div>
+			</div>
+		<div class="mark" style="display: none"></div>
+	</div>
+	</body>
+	<script type="application/javascript"  src="js/hkJS.js"></script>
+	<script type="text/javascript" src="js/zepto.min.js"></script>
+	<script src="js/mui.min.js"></script>
+	<script src="js/mui.picker.min.js"></script>
+	<script src="js/mui.poppicker.js"></script>
+	<script type="text/template" id="text">
+		<div class="sender">
+			<div>
+				<img src="">
+			</div>
+			<div>
+				<div class="left_triangle"></div>
+				<span class="mess"></span>
+			</div>
+		</div>
+	</script>
+	<script type="text/template" id="text1">
+		<div class="receiver">
+			<div>
+				<img src="">
+			</div>
+			<div>
+				<div class="right_triangle"></div>
+				<span class="mess"></span>
+			</div>
+		</div>
+	</script>
+	<script type="text/template" id="text2">
+		<div class="response">
+			<span class="text-primary"></span>
+			<div>
+				<button class="btn-agree">同意</button>
+				<button class="btn-reply">拒绝</button>
+			</div>
+			<p class="priTime"></p>
+		</div>
+	</script>
+	<script>
+		mui.init();
+		mui('.mui-scroll-wrapper').scroll({
+			deceleration: 0.00000001 //flick 减速系数，系数越大，滚动速度越慢，滚动距离越小，默认值0.0006
+		});
+
+		//取开关
+		var switchFlag = localStorage.getItem('switchFlag');
+		var switchFlag1 = localStorage.getItem('switchFlag1');
+		if(switchFlag == 'yes'){
+			$('.flag-vip').hide();
+		}
+		if(switchFlag1 == 'yes'){
+			$('.flag-vip').hide();
+		}
+
+		$("textarea").blur();
+
+
+
+		// $('.userPhoto').on('tap',function(){
+		// 	mui('#chatBox').scroll().scrollTo(110,110,100);
+		// });
+		(function($, doc){
+			$.ready(function() {
+				var name = window.location.search.split("?")[1].split("&")[1].split("=")[1];
+
+				getInterface().initDataWithArray("#FFFFFF","back",name,"","","#333333","tab_More","FFFFFF");
+				// var apk = localStorage.getItem('apk')
+				// getInterface().getAPPInfo();
+				/**
+				 * 获取对象属性的值
+				 * 主要用于过滤三级联动中，可能出现的最低级的数据不存在的情况，实际开发中需要注意这一点；
+				 * @param {Object} obj 对象
+				 * @param {String} param 属性名
+				 */
+				var _getParam = function(obj, param) {
+					return obj[param] || '';
+				};
+				//普通示例
+				var userPicker = new $.PopPicker();
+				userPicker.setData([{
+					value: 'ywj',
+					text: '很高兴认识你,我想和你进行甜蜜的约会'
+				}, {
+					value: 'aaa',
+					text: '请问是长期还是短期的甜蜜？'
+				}, {
+					value: 'lj',
+					text: '发个微信吧，我们微信上聊'
+				}, {
+					value: 'ymt',
+					text: '我想邀请你和我一起去旅行'
+				}, {
+					value: 'shq',
+					text: '方便的话，我们可以先出来吃个饭聊聊'
+				}]);
+				var showUserPickerButton = doc.getElementById('quickReply');
+				var userResult = doc.getElementById('userResult');
+
+				showUserPickerButton.addEventListener('tap', function(event) {
+					userPicker.show(function(items) {
+
+						console.log(items)
+						// if(!myvip){
+						// 	getInterface().msg_alert("你没有发送消息的权限，请充值会员")
+						// }else{
+						// 	msg = items[0].text;
+						// 	if(msg.length){
+						// 		getInterface().post_action("sendmsg",JSON.stringify({to: userId,msg:msg}),"post");
+						// 	}
+						// }
+							msg = items[0].text;
+							if(msg.length){
+								getInterface().post_action("sendmsg",JSON.stringify({to: userId,msg:msg}),"post");
+							}
+
+						// userResult.innerText = items[0].text;
+						//返回 false 可以阻止选择框的关闭
+
+					});
+				}, false);
+			});
+		})(mui, document);
+
+		var userId = window.location.search.split("?")[1].split("&")[0].split("=")[1];
+		var backtype = getQueryStringByName('backtype')
+
+		// 调用ios原生方法，请求用户列表
+		var sender = $($("#text").html())
+		var receiver = $($("#text1").html())
+		var response = $($("#text2").html())
+		var formimg
+		getInterface().post_action("readMsg",JSON.stringify({userId: userId}),"get");
+
+		function rightBtnClick(){
+	        getInterface().bottom_alert('提示','屏蔽此人','举报此人')
+	    }
+
+
+	    function return_sureMsg(data){
+	        data = decodeURI(data);
+	        // getInterface().msg_alert(data.length)
+	        if(data == "屏蔽此人"){
+	            getInterface().post_action("userHate",JSON.stringify({id: userId}),"post");
+	        }else if(data == "举报此人"){
+	            // 跳转到举报
+	            getInterface().html_jump_href(service+'/app/report.html?userId='+userId, 'no');
+	        }else{
+	        	if(switchFlag1=='no'){
+	        		if(edit == 1){
+	        			//编辑
+	        			getInterface().html_jump_href(service+'/app/newUpdateInfo.html','no');
+	        		}else if(edit == 0){
+	        			//升级
+	        			getInterface().html_jump_href(service+'/app/upgradeVIP.html?back=two','yes');
+	        		}
+	        	}
+
+	        }
+	    }
+		// 调用ios原生方法，返回用户列表
+		function return_action(data,data2) {
+			if(data2 == "readMsg"){
+				// if(data.ret == 1){
+				var result = data.chats
+				//给没有头像的加上默认头像
+				if(data.user.sex == 1){
+					//自己是男的
+					selfimg = data.user.avatar || "img/nan01.png"
+
+				}else if(data.user.sex == 2){
+					//自己是女的
+					selfimg = data.user.avatar || "img/nv01.png"
+				}
+
+				if(data.chatTo.sex == 1){
+					//对方是男的
+					formimg = data.chatTo.avatar || "img/nan01.png"
+
+				}else if(data.chatTo.sex == 2){
+					//对方是女的
+					formimg = data.chatTo.avatar || "img/nv01.png"
+				}
+
+			// if(localStorage.getItem('apk') == "1.0.2" || localStorage.getItem('apk') == "1.0.3"){
+			// 	if(switchFlag == 'yes'){
+			// 			isV = "vip0"
+			// 		}else{
+			// 			isV = data.chatTo.vipLevel
+			// 		}
+			// 		if(switchFlag1 == 'yes'){
+			// 			isV = "vip0"
+			// 		}else{
+			// 			isV = data.chatTo.vipLevel
+			// 		}
+			// }else{
+			// 	//判断是否会员
+			// 	if(!data.chatTo.vip.role){
+			// 		// $(".flag-vip").css("visibility","hidden")
+			// 		isV = ""
+			// 	}else{
+			// 		if(switchFlag == 'yes'){
+			// 			isV = ""
+			// 		}else{
+			// 			isV = "高级会员"
+			// 		}
+			// 		if(switchFlag1 == 'yes'){
+			// 			isV = ""
+			// 		}else{
+			// 			isV = "高级会员"
+			// 		}
+			// 	}
+			// }
+			if(switchFlag == 'yes'){
+						isV = "vip0"
+					}else{
+						isV = data.chatTo.vipLevel
+					}
+					if(switchFlag1 == 'yes'){
+						isV = "vip0"
+					}else{
+						isV = data.chatTo.vipLevel
+					}
+				
+				myvip = data.user.vip.role
+				//给头像做跳转
+				// $("#goto").attr("href",service+'/app/personal.html?myId='+data.user._id+"&personId="+data.chatTo._id)
+				// $(".userPhoto").attr("src",formimg)
+				//对方名字
+				// $("#nickname").html(data.chatTo.nickname)
+				// $("#nickname").css("color","#333")
+
+				if(!data.chatTo.addr){
+					var addr = ""
+				}else{
+					var addr = data.chatTo.addr+"/"
+				}
+				if(!data.chatTo.age){
+					var age = ""
+				}else{
+					var age = data.chatTo.age+"/"
+				}
+				if(!data.chatTo.lovePrice){
+					var lovePrice = ""
+				}else{
+					var lovePrice = data.chatTo.lovePrice
+				}
+				// $(".info").html(addr+age+lovePrice)
+				//个人信息导航栏
+				// alert(formimg)
+				if(data.chatTo.sex == 1){
+					//对方是男的
+					var nicknames = data.chatTo.nickname || "成功男士"
+					if(nicknames.length > 10){
+						var nicknames = nicknames.slice(0,10) + "..."
+					}
+
+				}else if(data.chatTo.sex == 2){
+					//对方是女的
+					var nicknames = data.chatTo.nickname || "美丽甜心"
+					if(nicknames.length > 10){
+						var nicknames = nicknames.slice(0,10) + "..."
+					}
+				}
+				getInterface().setChatNavWithData(nicknames,addr+age+lovePrice,isV,formimg)
+
+				$(".chatBox").html("");
+				selfId = data.user._id
+				otherId = data.chatTo._id
+				for( var i = 0;i < result.length;i++){
+					var cloneSender = $($("#text").html())
+					var cloneReceiver = $($("#text1").html())
+					var cloneResponse = $($("#text2").html())
+					//userId是对方的id
+					//selfId是自己的id
+					//formid是消息谁发的
+					//toid是发给谁的
+
+					//对方发文字
+					if(result[i].msgType == "text" && result[i].fromid == userId){
+						cloneSender.find('.mess').html(result[i].content);
+						cloneSender.find('.sender img').attr("src",formimg);
+						$(".chatBox").append(cloneSender);
+					}
+					//自己发文字
+					if(result[i].msgType == "text" && result[i].toid == userId){
+						cloneReceiver.find('.mess').html(result[i].content);
+						cloneReceiver.find('.receiver img').attr("src",selfimg);
+						$(".chatBox").append(cloneReceiver);
+					}
+
+					//自己请求私照
+					if(result[i].msgType == "requirePhotoPri" && result[i].fromid == selfId && result[i].photo == "ing"){
+						cloneResponse.find(".text-primary").html("请求查看对方私照")
+						cloneResponse.find('.btn-agree').css("display","none");
+						cloneResponse.find('.btn-reply').css("display","none");
+						cloneResponse.find('.priTime').html(formatTime(result[i].meta.createdAt));
+						$(".chatBox").append(cloneResponse);
+
+
+					}
+					//别人请求私照
+					if(result[i].msgType == "requirePhotoPri" && result[i].fromid == userId && result[i].photo == "ing"){
+						cloneResponse.find(".text-primary").html("对方请求查看私照")
+						cloneResponse.find('.priTime').html(formatTime(result[i].meta.createdAt));
+						$(".chatBox").append(cloneResponse);
+					}
+					//自己拒绝请求私照
+					if(result[i].msgType == "requirePhotoPri" && result[i].fromid == userId && result[i].photo == "no"){
+						cloneResponse.find('.text-primary').html("私照请求已经拒绝");
+						cloneResponse.find('.btn-agree').css("display","none");
+						cloneResponse.find('.btn-reply').css("display","none");
+						cloneResponse.find('.priTime').html(formatTime(result[i].meta.createdAt));
+						$(".chatBox").append(cloneResponse);
+					}
+					//自己通过请求私照
+					if(result[i].msgType == "requirePhotoPri" && result[i].fromid == userId && result[i].photo == "yes"){
+						cloneResponse.find('.text-primary').html("私照请求已经通过");
+						cloneResponse.find('.btn-agree').css("display","none");
+						cloneResponse.find('.btn-reply').css("display","none");
+						cloneResponse.find('.priTime').html(formatTime(result[i].meta.createdAt));
+						$(".chatBox").append(cloneResponse);
+					}
+					//对方拒绝请求私照
+					if(result[i].msgType == "requirePhotoPri" && result[i].toid == userId && result[i].photo == "no"){
+						cloneResponse.find('.text-primary').html("对方拒绝私照请求");
+						cloneResponse.find('.btn-agree').css("display","none");
+						cloneResponse.find('.btn-reply').css("display","none");
+						cloneResponse.find('.priTime').html(formatTime(result[i].meta.createdAt));
+						$(".chatBox").append(cloneResponse);
+					}
+					//对方通过请求私照
+					if(result[i].msgType == "requirePhotoPri" && result[i].toid == userId && result[i].photo == "yes"){
+						cloneResponse.find('.text-primary').html("对方通过私照请求，请到对方首页查看");
+						cloneResponse.find('.btn-agree').css("display","none");
+						cloneResponse.find('.btn-reply').css("display","none");
+						cloneResponse.find('.priTime').html(formatTime(result[i].meta.createdAt));
+						$(".chatBox").append(cloneResponse);
+					}
+
+				}
+				// mui('.chatBox').scroll().scrollToBottom(0)
+				mui('.mui-scroll-wrapper').scroll().reLayout();
+				mui('.mui-scroll-wrapper').scroll().scrollToBottom();//滚动到底部
+
+
+				// }
+				// else if(data.ret == 2){
+				// 	if(data.chatTo.sex == 1){
+				// 	//对方是男的
+				// 	formimg = data.chatTo.avatar || "img/nan01.png"
+
+				// }else if(data.chatTo.sex == 2){
+				// 	//对方是女的
+				// 	formimg = data.chatTo.avatar || "img/nv01.png"
+				// }
+				// 	$(".chatBox").html("");
+				// 	var cloneSender = sender.clone();
+				// 	cloneSender.find('.mess').html("你没有查看消息的权限，请充值会员");
+				// 	cloneSender.find('.sender img').attr("src",formimg);
+				// 	$(".chatBox").append(cloneSender);
+				// 	//没有权限
+				// 	// $(".mark").css("display","block")
+				// 	// getInterface().msg_alert("你没有查看消息的权限，请充值会员")
+				// }
+			}else if(data2 == "sendmsg"){
+				if(data.ret == 1){
+					var cloneReceiver = receiver.clone();
+					cloneReceiver.find('.receiver img').attr("src",selfimg);
+					cloneReceiver.find('.mess').html(msg);
+					$(".chatBox").append(cloneReceiver);
+					$("#userResult").val("")
+					mui('.mui-scroll-wrapper').scroll().reLayout();
+					mui('.mui-scroll-wrapper').scroll().scrollToBottom();//滚动到底部
+				}else if(data.ret == 4){
+					edit = 0
+					 getInterface().msg_alert(data.msg)
+
+				}else if(data.ret == 5){
+					 mui.toast(data.msg)
+
+				}else if(data.ret == 6){
+					mui.toast(data.msg);
+
+				}else if(data.ret == 7){
+					edit = 1
+					getInterface().msg_alert(data.msg)
+
+				}
+			}else if(data2 == "replyPhotoPri"){
+				if(data.ret == 1 && data.state == "yes"){
+					$(".text-primary").html("已经同意对方私照请求")
+					$(".btn-agree").css("display","none")
+					$(".btn-reply").css("display","none")
+					$('.priTime').html(formatTime(new Date()));
+
+				}else{
+					$(".text-primary").html("私照请求已经拒绝")
+					$(".btn-agree").css("display","none")
+					$(".btn-reply").css("display","none")
+					$('.priTime').html(formatTime(new Date()));
+
+				}
+			}else if(data2 == "userHate"){
+				if(data.ret==1){
+	                mui.toast("屏蔽成功！");
+	                localStorage.setItem('chatstate',1)
+	                setTimeout(function(){
+	                	// 从主页跳转过来，屏蔽后需返回2次
+	                	if(backtype=='p'){
+	                		getInterface().leftback_rootvc();
+	                	}else{//返回1次
+	                		getInterface().leftBtnClick();
+	                	}
+
+	                },1000)
+	            }
+			}
+		}
+
+		// mui('.chatBox').scroll().scrollTo(100,100,0);
+
+		//发送消息
+		$('.send').on('tap',function(){
+			// if(!myvip){
+			// 	getInterface().msg_alert("你没有发送消息的权限，请充值会员")
+			// }else{
+				msg = $("#userResult").val();
+				if(msg.length){
+					getInterface().post_action("sendmsg",JSON.stringify({to: userId,msg:msg}),"post");
+				}
+			// }
+
+		})
+		//同意请求私照方法
+		$('.chatBox').on('tap','.btn-agree',function(){
+			getInterface().post_action("replyPhotoPri",JSON.stringify({id: userId,reply:"yes"}),"post");
+
+		})
+		//拒绝请求私照方法
+		$('.chatBox').on('tap','.btn-reply',function(){
+			getInterface().post_action("replyPhotoPri",JSON.stringify({id: userId,reply:"no"}),"post");
+
+		})
+		//监听ios事件
+		function send_message(data){
+
+			// var apk = localStorage.getItem('apk')
+			// if(apk == "1.0.1"){
+			// 	var msg = data.asp.alert
+			// 	var type = data.type
+			// 	var userid = data.userId
+
+			// }
+			// if(apk == "1.0.2" || apk == "1.0.3"){
+			// 	var msg = data.extras.msg
+			// 	var type = data.extras.type
+			// 	var userid = data.extras.userId
+			// }
+			var msg = data.extras.msg
+			var type = data.extras.type
+			var userid = data.extras.userId
+			var cloneSender = sender.clone();
+			var cloneReceiver = receiver.clone();
+			var cloneResponse = response.clone();
+
+			// var formimg = $(".sender").find('img').attr("src")
+			if(userid == otherId){
+				if(type == "chat"){
+				//消息类型是文字
+
+				cloneSender.find('.mess').html(msg);
+				cloneSender.find('.sender img').attr("src",formimg);
+				$(".chatBox").append(cloneSender);
+			}
+			if(type == "requirePhotoPri"){
+				//消息类型是请求私照
+				// alert(cloneResponse)
+
+				var str = '<div class="response">'
+					str += '<span class="text-primary">对方请求查看私照</span>'
+					str += '<div>'
+					str += '<button class="btn-agree">同意</button>'
+					str += '<button class="btn-reply">拒绝</button>'
+					str += '</div>'
+					str += '<p class="priTime">'+formatTime(new Date())+'</p>'
+					str += "</div>"
+
+
+				// cloneResponse.find('.text-primary').html("对方请求查看私照");
+				// cloneResponse.find('.btn-agree').css("display","none");
+				// cloneResponse.find('.btn-reply').css("display","none");
+				// cloneResponse.find('.priTime').html(formatTime(new Date()));
+				$(".chatBox").append(str);
+			}
+			if(type == "replyPhotoPri"){
+				if(data.reply == "yes"){
+					var str1 = '<div class="response">'
+						str1 += '<span class="text-primary">对方通过你的私照请求</span>'
+						str1 += '<p class="priTime">'+formatTime(new Date())+'</p>'
+						str1 += "</div>"
+					$(".chatBox").append(str1);
+				}else if(data.reply == "no"){
+					var str2 = '<div class="response">'
+						str2 += '<span class="text-primary">对方已经拒绝你的私照请求</span>'
+						str2 += '<p class="priTime">'+formatTime(new Date())+'</p>'
+						str2 += "</div>"
+					$(".chatBox").append(str2);
+				}
+			}
+			//新的信息滚到底部
+			mui('.mui-scroll-wrapper').scroll().reLayout();
+			mui('.mui-scroll-wrapper').scroll().scrollToBottom();//滚动到底部
+			}
+
+		}
+		//后退方法
+		function leftBtnClick(){
+			getInterface().leftBtnClick();
+
+		}
+		//格式化时间
+		function formatTime(time){
+			var date = new Date(time);
+			var Y = date.getFullYear() + '-';
+			var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+			var D = date.getDate() + ' ';https://www.google.co.jp/url?sa=t&rct=j&q=&esrc=s&source=web&cd=1&ved=0ahUKEwixg5rIwZTVAhVMybwKHfCVAhUQFggmMAA&url=http%3A%2F%2Fblog.sina.com.cn%2Fs%2Fblog_5f54f0be0100ds2r.html&usg=AFQjCNHV6WCrr3SmQ024eTgG8Ss6pCcVjA
+			var h = date.getHours() + ':';
+			var m = date.getMinutes() + ':';
+			var s = date.getSeconds();
+			var nowTime = Y+M+D+h+m+s
+			return nowTime
+		}
+		//和右上角的方法冲突，暂时屏蔽
+		/*function return_sureMsg(data){
+			getInterface().html_jump_href(service+'/app/upgradeVIP.html?back=two','yes');
+		}*/
+
+		//键盘出现
+		function keyboardWillShow(data){
+			getInterface().return_keyboardWillShow()
+			// alert($(".chatBox").css("height"))
+			// document.getElementById('noBg').style.top = (data - 500) + "px"
+
+		}
+		//键盘消失
+		function keyboardWillHide(){
+			getInterface().return_keyboardWillHide()
+		}
+		//导航栏跳转
+		function click_chatNav(){
+			getInterface().html_jump_href(service+'/app/personal.html?myId='+selfId+"&personId="+otherId,'yes');
+		}
+
+
+		// //版本号
+		// function return_APPInfo(data){
+		// 	localStorage.setItem("apk",data)
+		// }
+
+		
+
+		// 解决输入法遮挡
+        var timer = null;
+        $('textarea').on('focus', function() {
+      //   	var viewTop = $(window).scrollTop(),            // 可视区域顶部
+    		// viewBottom = viewTop + window.innerHeight;
+    		// alert(viewBottom)
+			// alert(12)
+            clearInterval(timer);
+            var index = 0;
+            timer = setInterval(function() {
+                if(index>2) {
+                    $('body').scrollTop(1000000);
+                    clearInterval(timer);
+                    
+                }
+                index++;
+            }, 0)
+            
+        })
+
+	</script>
+</html>
+

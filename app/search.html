@@ -1,0 +1,524 @@
+<!doctype html>
+<html class="fullScreen">
+<head>
+	<meta charset="UTF-8">
+	<title>筛选条件</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link href="css/mui.min.css" rel="stylesheet" />
+	<link href="css/mui.picker.min.css" rel="stylesheet" />
+	<link href="css/mui.poppicker.css" rel="stylesheet" />
+	<link rel="stylesheet" type="text/css" href="css/icons-extra.css" />
+	<link rel="stylesheet" href="css/style.css" />
+
+	<script src="js/zepto.min.js"></script>
+	<script src="js/range.js"></script>
+	<script type="application/javascript"  src="js/hkJS.js"></script>
+	<script type="application/javascript"  src="js/bbmis.js"></script>
+</head>
+
+<body>
+	<!--页面主内容区开始-->
+	<div class="mui-content search">
+		<ul class="mui-table-view" style="margin-top:0;">
+			<!--<li class="mui-table-view-cell">
+				<span></span>
+				<div class="mui-switch mui-switch-mini">
+					<div class="mui-switch-handle"></div>
+				</div>
+			</li>-->
+
+			<!-- 会员位置 -->
+			<li class="mui-table-view-cell info-title">位置查找</li>
+			<li class="mui-table-view-cell">
+				<span>开启手机定位</span>
+				<div class="mui-switch mui-switch-mini" id='location_btn'>
+				  <div class="mui-switch-handle"></div>
+				</div>
+				<div id="transparent_cover" style="width: 47px; height: 30px;position: absolute;top: 7px;right: 15px;"></div>
+			</li>
+			<li class="mui-table-view-cell" id='showCityPicker3'>
+				<a class="mui-navigate-right">
+					选择城市
+					<span class="mui-badge noBg" id='cityResult3'></span>
+				</a>
+			</li>
+			<li class="mui-table-view-cell info-title">位置范围</li>
+			<li class="mui-table-view-cell">
+				<div class="mui-input-row mui-input-range">
+		            <input type="range" id='range' value="30" min="0" max="100" >
+		        </div>
+				<div class="rangeValue">
+				  <span id="rangevalue">30</span><span class="km">km</span>
+				</div>
+			</li>
+			<li class="mui-table-view-cell info-title" id='noVip'>会员性质查找</li>
+			<li class="mui-table-view-cell search-item search-gray">
+				看过我
+				<div class="mui-switch mui-switch-mini" id='lookedMe_btn'>
+					<div class="mui-switch-handle"></div>
+				</div>
+			</li>
+			<li class="mui-table-view-cell search-item search-gray">
+				照片
+				<div class="mui-switch mui-switch-mini" id='photo_btn'>
+					<div class="mui-switch-handle"></div>
+				</div>
+			</li>
+			<li class="mui-table-view-cell no-vip-hide search-item search-gray">
+				VIP
+				<div class="mui-switch mui-switch-mini" id='vip_btn'>
+					<div class="mui-switch-handle"></div>
+				</div>
+			</li>
+			<li class="mui-table-view-cell search-item search-gray">
+				未查看过
+				<div class="mui-switch mui-switch-mini" id='noCheck_btn'>
+					<div class="mui-switch-handle"></div>
+				</div>
+			</li>
+			<li class="mui-table-view-cell search-item search-gray">
+				查看过
+				<div class="mui-switch mui-switch-mini" id='checked_btn'>
+					<div class="mui-switch-handle"></div>
+				</div>
+			</li>
+			<li class="mui-table-view-cell search-item search-gray">
+				我的关注
+				<div class="mui-switch mui-switch-mini" id='myFollow_btn'>
+					<div class="mui-switch-handle"></div>
+				</div>
+			</li>
+			<li class="mui-table-view-cell search-item search-gray">
+				关注我的
+				<div class="mui-switch mui-switch-mini" id='followMe_btn'>
+					<div class="mui-switch-handle"></div>
+				</div>
+			</li>
+		</ul>
+		<div class="comfirmBtn">
+			<button type="button" class="mui-btn btn-primary" id='confirm_btn'>确认</button>
+		</div>
+		<div class="search-separate"></div>
+	</div>
+	<!--页面主内容区结束-->
+
+	<script src="js/mui.min.js"></script>
+	<script src="js/mui.view.js"></script>
+	<script src="js/mui.picker.min.js"></script>
+	<script src="js/mui.poppicker.js"></script>
+	<script src="js/city.data-3.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+
+		$(function(){
+			getInterface().initDataWithArray("#FFFFFF","back","筛选条件","重置","","#333333","","#333333");
+		});
+		function leftBtnClick(){
+			getInterface().leftBtnClick();
+		}
+
+		//获取app版本
+	    getInterface().getAPPInfo();
+	    //是否点位
+		var locationSta = localStorage.getItem('locationSta');
+		//搜索条件
+		var searchItems = JSON.parse(localStorage.getItem('searchItems'));
+	    if(locationSta == 'yes'){
+			$('#location_btn').addClass('mui-active');
+				$('#showCityPicker3').hide();
+	    }else{
+			$('#location_btn').removeClass('mui-active');
+				$('#showCityPicker3').show();
+	    }
+
+		//获取数据
+		getInterface().post_action('getInfo',{},'get');
+
+		//取开关
+		var switchFlag = localStorage.getItem('switchFlag');
+		var switchFlag1 = localStorage.getItem('switchFlag1');
+		//取点击搜索之前的tab
+		var tabthis = localStorage.getItem('tabthis');  // 从本地拿数据
+
+		function return_action(data,data2){
+			//判断是否高级会员
+			if(data2 == 'getInfo'){
+				if(data.ret == 1){
+					//判断是否屏蔽
+					if(data.shield == 'yes'){
+						$('#noVip').html('其他查找条件');
+						$('.mui-table-view .no-vip-hide').hide();
+						$('.search-gray').css('color','#333');
+					}
+
+					if(switchFlag1 == 'yes'){
+						$('#noVip').html('其他查找条件');
+						$('.mui-table-view .no-vip-hide').hide();
+						$('.search-gray').css('color','#333');
+					}
+					//是否会员
+					if(data.result.vip.role){
+						$('.search li').removeClass('search-gray');
+						$('#noVip_btn').hide();
+					}else{
+						// //滑块
+						// $('.search > ul input[class="search-gray"]').on("tap",function(){
+						// 	getInterface().html_jump_href(service+'/app/upgradeVIP.html', 'no');
+						// });
+						// if(switchFlag1=='yes'){
+
+						// }else{
+						// 	if(data.shield == 'no'){
+						// 		$('.search-gray').on('tap', function() {
+						// 			getInterface().html_jump_href(service+'/app/upgradeVIP.html?back=one', 'yes');
+						// 		});
+						// 		$('.search-item').find('.mui-switch').addClass('mui-disabled');
+						// 	}
+						// }
+
+
+						if(switchFlag1 == 'no'){
+							$('.search-gray').on('tap', function() {
+								getInterface().html_jump_href(service+'/app/paymentVIP.html?back=one', 'yes');
+							});
+							$('.search-item').find('.mui-switch').addClass('mui-disabled');
+						}
+
+						// //确认按钮
+						// $('.search button[class*="search-gray"]').addClass('mui-disabled');
+					}
+				}
+			}
+			//确认后
+			if(data2 == 'searchLists'){
+				if(data.ret == 1){
+					// 将result储存起来
+					// localStorage.setItem('searchResults',JSON.stringify(data.results));
+					// 存储跳首页变量
+					localStorage.setItem('searchFlag','1');
+					// 存储跳首页变量（避免每次tab点击首页都刷新）
+					localStorage.setItem('searchSta','1');
+
+					//储存搜索条件
+					var searchItems = {
+						search: tabthis,
+						distance: rangeValue,
+						browsed: lookedMeSta,
+						photo: photoSta,
+						vip: vipSta,
+						browse: noCheckSta,
+						browsedto: checkedSta,
+						care: myFollowSta,
+						cared: followMeSta,
+						city: citySta
+					}
+					localStorage.setItem('searchItems',JSON.stringify(searchItems));
+					// 跳转到首页
+					// getInterface().leftBtnClick();
+					getInterface().highClassSearch();
+				}else{
+					getInterface().msg_alert(data.err);
+				}
+			}
+		}
+
+		//范围
+		var rangeValue = parseInt($('#rangevalue').html())*1000;
+		var change = function($input) {
+		    //内容可自行定义
+		    console.log("123");
+		    rangeValue = parseInt($('#rangevalue').html())*1000;
+		}
+		$('#range').css('background-size', $('#range').val() + '% 100%');
+		$('#range').RangeSlider({ min: 0,   max: 100,  step: 1,  callback: change});
+
+		//将true&false转化为yes&no
+		function transformation (val) {
+			var str = ""
+			if(val){
+				str = 'yes';
+			}else{
+				str = 'no';
+			}
+			return str;
+		}
+		//返回app版本
+		var edition;
+		function return_APPInfo(data){
+			edition = data;
+	    }
+
+	    //定位
+	    var locationFlag = "no";
+		//纬度
+		var latitude = "";
+		//经度
+		var longitude = "";
+		$('#transparent_cover').on("tap",function(){
+			if($('#location_btn').hasClass('mui-active') == true){
+				$('#location_btn').removeClass('mui-active');
+				locationFlag = 'no';
+				localStorage.setItem('locationSta','no');
+				$('#showCityPicker3').show();
+			}else{
+				//调是否打开定位接口
+				getInterface().openSettingsURLString();
+			}
+		});
+		//是否打开定位
+		function return_openSettingsURLString(data,data2){
+			if(data == 0){
+				$('#location_btn').removeClass('mui-active');
+				locationFlag = 'no';
+				localStorage.setItem('locationSta','no');
+				$('#showCityPicker3').show();
+			}else{
+				$('#location_btn').addClass('mui-active');
+				$('#showCityPicker3').hide();
+				locationFlag = 'yes';
+				//纬度赋值
+				latitude = data;
+				//经度赋值
+				longitude = data2;
+				//储存经纬度
+				localStorage.setItem('latitude',latitude);
+				localStorage.setItem('longitude',longitude);
+				localStorage.setItem('locationSta','yes');
+
+				// alert('纬度'+latitude+'经度'+longitude);
+			}
+
+		}
+
+
+
+		//选择城市
+		var citySta = '';
+		(function($, doc) {
+			$.init();
+			$.ready(function() {
+				var _getParam = function(obj, param) {
+					return obj[param] || '';
+				};
+				//地区
+				var cityPicker3 = new $.PopPicker({
+					layer: 2
+				});
+				cityPicker3.setData(cityData3);
+				var showCityPickerButton = doc.getElementById('showCityPicker3');
+				var cityResult3 = doc.getElementById('cityResult3');
+				showCityPickerButton.addEventListener('tap', function(event) {
+					cityPicker3.show(function(items) {
+						cityResult3.innerText = _getParam(items[0], 'text') + "-" + _getParam(items[1], 'text');
+						//返回 false 可以阻止选择框的关闭
+						//return false;
+
+						//获取城市名
+						citySta = _getParam(items[0], 'text')+_getParam(items[1], 'text');
+					});
+				}, false);
+			});
+		})(mui, document);
+
+
+		//看过我
+		var lookedMeFlag = $('#lookedMe_btn').hasClass('mui-active');//储存当前的状态
+		var lookedMeSta = transformation(lookedMeFlag);
+		$('#lookedMe_btn').on("tap",function(){
+			if($('#lookedMe_btn').hasClass('mui-active') == false && lookedMeFlag == true){
+				lookedMeFlag = false;
+				lookedMeSta = 'no';
+			}
+			if($('#lookedMe_btn').hasClass('mui-active') == true && lookedMeFlag == false){
+				lookedMeFlag = true;
+				lookedMeSta = 'yes';
+			}
+		});
+
+		//照片
+		var photoFlag = $('#photo_btn').hasClass('mui-active');//储存当前的状态
+		var photoSta = transformation(photoFlag);
+		$('#photo_btn').on("tap",function(){
+			if($('#photo_btn').hasClass('mui-active') == false && photoFlag == true){
+				photoFlag = false;
+				photoSta = 'no';
+			}
+			if($('#photo_btn').hasClass('mui-active') == true && photoFlag == false){
+				photoFlag = true;
+				photoSta = 'yes';
+			}
+		});
+
+		//vip
+		var vipFlag = $('#vip_btn').hasClass('mui-active');//储存当前的状态
+		var vipSta = transformation(vipFlag);
+		$('#vip_btn').on("tap",function(){
+			if($('#vip_btn').hasClass('mui-active') == false && vipFlag == true){
+				vipFlag = false;
+				vipSta = 'no';
+			}
+			if($('#vip_btn').hasClass('mui-active') == true && vipFlag == false){
+				vipFlag = true;
+				vipSta = 'yes';
+			}
+		});
+
+		//未查看过
+		var noCheckFlag = $('#noCheck_btn').hasClass('mui-active');//储存当前的状态
+		var noCheckSta = transformation(noCheckFlag);
+		$('#noCheck_btn').on("tap",function(){
+			if($('#noCheck_btn').hasClass('mui-active') == false && noCheckFlag == true){
+				noCheckFlag = false;
+				noCheckSta = 'no';
+			}
+			if($('#noCheck_btn').hasClass('mui-active') == true && noCheckFlag == false){
+				noCheckFlag = true;
+				noCheckSta = 'yes';
+			}
+		});
+
+		//查看过
+		var checkedFlag = $('#checked_btn').hasClass('mui-active');//储存当前的状态
+		var checkedSta = transformation(checkedFlag);
+		$('#checked_btn').on("tap",function(){
+			if($('#checked_btn').hasClass('mui-active') == false && checkedFlag == true){
+				checkedFlag = false;
+				checkedSta = 'no';
+			}
+			if($('#checked_btn').hasClass('mui-active') == true && checkedFlag == false){
+				checkedFlag = true;
+				checkedSta = 'yes';
+			}
+		});
+
+		//我的关注
+		var myFollowFlag = $('#myFollow_btn').hasClass('mui-active');//储存当前的状态
+		var myFollowSta = transformation(myFollowFlag);
+		$('#myFollow_btn').on("tap",function(){
+			if($('#myFollow_btn').hasClass('mui-active') == false && myFollowFlag == true){
+				myFollowFlag = false;
+				myFollowSta = 'no';
+			}
+			if($('#myFollow_btn').hasClass('mui-active') == true && myFollowFlag == false){
+				myFollowFlag = true;
+				myFollowSta = 'yes';
+			}
+		});
+
+		//关注我的
+		var followMeFlag = $('#followMe_btn').hasClass('mui-active');//储存当前的状态
+		var followMeSta = transformation(followMeFlag);
+		$('#followMe_btn').on("tap",function(){
+			if($('#followMe_btn').hasClass('mui-active') == false && followMeFlag == true){
+				followMeFlag = false;
+				followMeSta = 'no';
+			}
+			if($('#followMe_btn').hasClass('mui-active') == true && followMeFlag == false){
+				followMeFlag = true;
+				followMeSta = 'yes';
+			}
+		});
+
+
+		//范围
+		resetflag = 0;
+		//点击顶部重置
+		function rightBtnClick(){
+			resetflag = 1;
+			//定位
+			$('#location_btn').removeClass('mui-active');
+			//城市
+			$('#showCityPicker3').show();
+
+			//范围
+			$('#range').attr('value','30').css('background-size','30% 100%');
+			$('.mui-tooltip').css('left','56.4px').html('30');
+			$('#rangevalue').html('30');
+			$("#range").trigger("input");
+			rangeValue = 30;
+			//看过我
+			$('#lookedMe_btn').removeClass('mui-active');
+			lookedMeSta = 'no';
+			//照片
+			$('#photo_btn').removeClass('mui-active');
+			photoSta = 'no';
+			//vip
+			$('#vip_btn').removeClass('mui-active');
+			vipSta = 'no';
+			//未查看过
+			$('#noCheck_btn').removeClass('mui-active');
+			noCheckSta = 'no';
+			//查看过
+			$('#checked_btn').removeClass('mui-active');
+			checkedSta = 'no';
+			//我的关注
+			$('#myFollow_btn').removeClass('mui-active');
+			myFollowSta = 'no';
+			//关注我的
+			$('#followMe_btn').removeClass('mui-active');
+			followMeSta = 'no';
+			//改变按钮样式
+			$('.mui-switch-handle').removeAttr('style');
+		}
+
+		// $('.info-title').on('tap',function(){
+		// 	flag = 1
+		// 	//定位
+		// 	$('#location_btn').addClass('mui-active');
+		// 	//城市
+		// 	$('#showCityPicker3').hide();
+
+		// 	//范围
+		// 	$('#range').attr('value','30').css('background-size','30% 100%');
+		// 	$('.mui-tooltip').css('left','56.4px').html('30');
+		// 	$('#rangevalue').html('30');
+		// 	rangeValue == 30;
+		// // $('#range').RangeSlider({ min: 0,   max: 100,  step: 1,  callback: change});
+		// 	//看过我
+		// 	$('#lookedMe_btn').removeClass('mui-active');
+		// 	lookedMeSta == 'no';
+		// 	//照片
+		// 	$('#photo_btn').removeClass('mui-active');
+		// 	photoSta == 'no';
+		// 	//vip
+		// 	$('#vip_btn').removeClass('mui-active');
+		// 	vipSta == 'no';
+		// 	//未查看过
+		// 	$('#noCheck_btn').removeClass('mui-active');
+		// 	noCheckSta == 'no';
+		// 	//查看过
+		// 	$('#checked_btn').removeClass('mui-active');
+		// 	checkedSta == 'no';
+		// 	//我的关注
+		// 	$('#myFollow_btn').removeClass('mui-active');
+		// 	myFollowSta == 'no';
+		// 	//关注我的
+		// 	$('#followMe_btn').removeClass('mui-active');
+		// 	followMeSta == 'no';
+		// 	//改变按钮样式
+		// 	$('.mui-switch-handle').removeAttr('style');
+		// });
+
+		//vip确认提交
+		$('#confirm_btn').on("tap",function(){
+
+			if(locationFlag == 'yes'){
+				$('#showCityPicker3').hide();
+				citySta = '';
+			}
+			// alert(citySta);
+			// alert(rangeValue);
+			// 请求
+
+			getInterface().post_action('searchLists',JSON.stringify({pageNumber:"1",search: tabthis,distance: rangeValue,browsed: lookedMeSta,photo: photoSta,vip: vipSta,browse: noCheckSta,browsedto: checkedSta,care: myFollowSta,cared: followMeSta,city: citySta}),'post');
+		});
+
+		// //非vip确认提交
+		// $('#noVip_btn').on("tap",function(){
+		// 	// 请求
+		// 	// getInterface().post_action('searchLists',JSON.stringify({Number: rangeValue,browsed: lookedMeSta,photo: photoSta,vip: vipSta,browse: noCheckSta,browsedto: checkedSta,care: myFollowSta,cared: followMeSta}),'post');
+		// 	alert(11);
+		// });
+	</script>
+</body>
+
+</html>

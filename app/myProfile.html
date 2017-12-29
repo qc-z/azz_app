@@ -1,0 +1,257 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>我的资料</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link href="css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="css/style.css" />
+	<script src="js/zepto.min.js"></script>
+	<script src="js/bbmis.js"></script>
+	<script type="application/javascript"  src="js/hkJS.js"></script>
+</head>
+
+<body>
+	<!--页面主内容区开始-->
+	<div class="mui-page-content myProfile">
+		<div class="mui-scroll">
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell mui-media headTitle" id="upgrade">
+					<a class="mui-navigate-right hideArrowFlag">
+						<img id="headPic" class="mui-media-object mui-pull-left" src="">
+						<div class="mui-media-body">
+							<span id="userName"></span>
+							<p><span id="isVip" class="mui-badge">普通会员</span></p>
+						</div>
+						<span class="mui-badge xufei" id="hint">升级VIP</span>
+					</a>
+				</li>
+				<li class="mui-table-view-cell">
+					资料投放
+					<div class="mui-switch mui-switch-mini mui-active" id="delivery_btn">
+					  <div class="mui-switch-handle"></div>
+					</div>
+				</li>
+				<!-- <li class="mui-table-view-cell" id="hiddenSurface">
+					隐藏浏览足迹
+					<div class="mui-switch mui-switch-mini mui-active" id="hiddenSurface_btn">
+					  <div class="mui-switch-handle"></div>
+					</div>
+				</li>
+				<li class="mui-table-view-cell" id="hiddenAtten">
+					隐藏我的关注
+					<div class="mui-switch mui-switch-mini mui-active" id="hiddenAtten_btn">
+					  <div class="mui-switch-handle"></div>
+					</div>
+				</li> -->
+				<li class="mui-table-view-cell" id="updateInfo">
+			        <a class="mui-navigate-right">修改资料</a>
+			    </li>
+			   	<li class="mui-table-view-cell" id="updatePhoto">
+			        <a class="mui-navigate-right">上传照片</a>
+			    </li>
+			    <li class="mui-table-view-cell" id="balckList">
+			        <a class="mui-navigate-right">黑名单</a>
+			    </li>
+			    <li class="mui-table-view-cell marTop" id="sett">
+			        <a class="mui-navigate-right">关于</a>
+			    </li>
+			    <li class="mui-table-view-cell" id="agreement">
+			        <a class="mui-navigate-right">用户协议</a>
+			    </li>
+			    <li class="mui-table-view-cell" id="feedback">
+			        <a class="mui-navigate-right">意见反馈</a>
+			    </li>
+			</ul>
+		</div>
+	</div>
+	<!--页面主内容区结束-->
+
+<script src="js/mui.min.js"></script>
+<script src="js/mui.view.js "></script>
+<script type="text/javascript">
+	mui.init();
+	$(function(){
+		getInterface().initDataWithArray("#FFFFFF","back","我的资料","","","#333333","","");
+	})
+
+	var shield1 = 'no';
+	localStorage.setItem('shield1',shield1)
+	var u = navigator.userAgent;
+    var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1;
+    var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+    if(isiOS){
+    	getInterface().action_info()
+    	function return_info(data,data2){
+			localStorage.setItem('shield1',data)
+			if(data=='yes'){
+				shield1 = 'yes';
+			}else{
+				shield1 = 'no';
+			}
+		}
+    }
+
+	function leftBtnClick(){
+		getInterface().leftBtnClick();
+	}
+	getInterface().post_action("getInfo",{},"get");
+
+	//是否投放
+	var flag = $('#delivery_btn').hasClass('mui-active');//储存当前的状态
+	$('#delivery_btn').on("tap",function(){
+		if($('#delivery_btn').hasClass('mui-active') == false && flag == true){
+			flag = false;
+		}
+		if($('#delivery_btn').hasClass('mui-active') == true && flag == false){
+			flag = true;
+		}
+		if($('#delivery_btn').hasClass('mui-active') == flag){
+			getInterface().post_action('listSet',JSON.stringify({status:flag}),'post');
+		}
+	});
+	// //是否隐藏浏览足迹
+	// $('#hiddenSurface_btn').on("tap",function(){
+	// 	var hiddenSurfaceSta = document.getElementById("hiddenSurface_btn").classList.contains("mui-active");
+	// 	if(hiddenSurfaceSta){
+	// 		console.log("打开状态");
+	// 	}else{
+	// 		console.log("关闭状态");
+	// 	}
+	// });
+	// //是否隐藏我的关注
+	// $('#hiddenAtten_btn').on("tap",function(){
+	// 	var hiddenAttenSta = document.getElementById("hiddenAtten_btn").classList.contains("mui-active");
+	// 	if(hiddenAttenSta){
+	// 		console.log("打开状态");
+	// 	}else{
+	// 		console.log("关闭状态");
+	// 	}
+	// });
+
+	//取开关
+	var switchFlag = localStorage.getItem('switchFlag');
+
+	var isVipFlag = false;
+	function return_action(data,data2){
+		if(data2 == 'listSet'){
+
+		}else{
+			if(data.shield=='yes'){
+				$('#sett').hide();
+				$('#isVip').hide();
+				$('#hint').hide();
+			}else{
+				$('#sett').show();
+				$('#isVip').show();
+				$('#hint').show();
+			}
+			if(shield1=='yes'){
+				$('#sett').hide();
+				$('#isVip').hide();
+				$('#hint').hide();
+			}else{
+				$('#sett').show();
+				$('#isVip').show();
+				$('#hint').show();
+			}
+
+			if(data.result.avatar){
+				$('#headPic').attr('src',data.result.avatar+'?x-oss-process=image/resize,h_65');
+			}else if(data.result.sex==1){
+				$('#headPic').attr('src','img/nan01.png');
+			}else{
+				$('#headPic').attr('src','img/nv01.png');
+			}
+			if(data.result.nickname){
+				$('#userName').text(data.result.nickname);
+			}else if(data.result.sex==1){
+				$('#userName').text('成功男士');
+			}else{
+				$('#userName').text('魅力甜心');
+			}
+
+			if(data.result.traceid.listSet){
+				$('#delivery_btn').addClass('mui-active')
+			}else{
+				$('#delivery_btn').removeClass('mui-active')
+			}
+			userSex = data.result.sex;
+
+			if(data.result.vip.role){
+				$('#isVip').addClass('mui-badge-warning');
+				$('#isVip').text('高级会员');
+				$('#hint').text('VIP续费');
+				$('#hiddenSurface').show();
+				$('#hiddenAtten').show();
+				isVipFlag = true;
+			}else{
+				$('#hiddenSurface').hide();
+				$('#hiddenAtten').hide();
+				isVipFlag = false;
+			}
+		}
+	}
+	// 跳转到充值VIP
+
+	if(shield1 == 'no'){//屏蔽了就不能跳转
+		$('#upgrade').on('tap',function(){
+			getInterface().html_jump_href(service+'/app/paymentVIP.html', 'no');
+		});
+	}else{
+		$('.upgrade').unbind();
+		$('.hideArrowFlag').removeClass('mui-navigate-right');
+	}
+
+
+	function reload_mine(){
+		var infoSta = localStorage.getItem('infoSta');
+		var photoSta = localStorage.getItem('photoSta');
+		var upgradeSta = localStorage.getItem('upgradeSta');
+		var payState = localStorage.getItem('payState')
+		// 存储跳首页变量（避免每次tab点击首页都刷新）
+		localStorage.setItem('infoSta','0');
+		localStorage.setItem('photoSta','0');
+		localStorage.setItem('upgradeSta','0');
+		localStorage.setItem('payState',0)
+		// alert("info="+infoSta+"photo="+photoSta+"upgrade="+upgradeSta)
+		if(infoSta==1 || photoSta==1 || upgradeSta==1 || payState==1){
+			//localStorage.setItem('infoSta',1);
+			getInterface().post_action("getInfo",{},"get");
+		}
+	}
+
+	// 跳转到修改资料
+	$('#updateInfo').on('tap',function(){
+		getInterface().html_jump_href(service+'/app/updateInfo.html', 'no');
+	});
+
+	// 跳转到上传照片男
+	$('#updatePhoto').on('tap',function(){
+		getInterface().html_jump_href(service+'/app/updatePhoto.html?userSex='+userSex, 'yes');
+	})
+	// 跳转到设置
+	$('#sett').on('tap',function(){
+		getInterface().html_jump_href(service+'/app/setting.html', 'no');
+	})
+	// 跳转到帮助
+	$('#helpPage').on('tap',function(){
+		getInterface().html_jump_href(service+'/app/help.html', 'no');
+	})
+	// 跳转到用户协议
+	$('#agreement').on('tap',function(){
+		getInterface().html_jump_href(service+'/app/agreement.html', 'no');
+	})
+	// 跳转到意见反馈
+	$('#feedback').on('tap',function(){
+		getInterface().html_jump_href(service+'/app/feedback.html', 'no');
+	})
+	// balckList
+	$('#balckList').on('tap',function(){
+		getInterface().html_jump_href(service+'/app/blacklist.html', 'no');
+	})
+
+</script>
+</body>
+
+</html>

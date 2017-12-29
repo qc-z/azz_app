@@ -1,0 +1,315 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>消息列表</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<meta name="format-detection" content="telephone=no" />
+	<link href="css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" type="text/css" href="css/icons-extra.css" />
+	<link rel="stylesheet" href="css/style.css" />
+	<script type="text/javascript" src="js/zepto.min.js"></script>
+	<script src="js/bbmis.js"></script>
+	<script type="application/javascript"  src="js/hkJS.js"></script>
+	<style type="text/css">
+		.unread {
+			position: absolute;
+		    top: 6%;
+		    left: 21%;
+		    width: 1.2rem;
+		    height: 1.2rem;
+		    background-color: #fa6f57;
+		    border-radius: 50%;
+		    text-align: center;
+		    color: aliceblue;
+				}
+	</style>
+</head>
+
+<body class="whiteBg">
+	<!--页面主内容区开始-->
+	<div class="mui-page-content index-con mess-con" id='refreshDiv'>
+		<ul class="mui-table-view" id="users">
+			<!-- . -->
+			<!-- . -->
+			<!-- . -->
+
+			<!-- . -->
+			<!-- . -->
+			<!-- . -->
+		</ul>
+		<div class="nobdyTips nobdyTips_collect" id='nobdyTips1'>
+			<img src="./img/nolove.png" alt="">
+			<p class="noresult">您暂未有对话的人</p>
+			<p class="changeTerm"></p>
+			<button id='search_btn'>看看附近有谁</button>
+		</div>
+	</div>
+	<!--页面主内容区结束-->
+</body>
+<script src="js/mui.min.js"></script>
+<script type="text/template" id="text">
+	<li class="mui-table-view-cell mui-media collect-item">
+		<!-- <div class="mui-slider-right mui-disabled">
+            <a class="mui-btn mui-btn-red">删除</a>
+        </div>
+		<a class="mui-slider-handle coll-item">
+        -->
+        <a>
+            <img class="mui-media-object mui-pull-left" src="">
+            <div class="mui-media-body">
+            	<span class="nickName"></span>
+            	<span class="unread"></span>
+        		<i class="icon icon-crown" style="display: none"></i>
+					<!-- <i class="icon icon-vip"></i> -->
+        		<span class="time"></span>
+                <p class='mui-ellipsis basicInfo'></p>
+            </div>
+        </a>
+    </li>
+</script>
+<script type="text/javascript">
+// alert($("#text").html())
+	// var temp = $(".collect-item");
+	// 调用ios原生方法，初始化顶部栏
+	getInterface().initDataWithArray("#FFFFFF","","宠爱蜜语","","","#333333","","");
+	// 调用ios原生方法，请求用户列表
+	getInterface().post_action("getMsgs","","get");
+	//取开关
+	var switchFlag = localStorage.getItem('switchFlag');
+	var switchFlag1 = localStorage.getItem('switchFlag1');
+
+	//得到版本号
+	//获取app版本
+    getInterface().getAPPInfo();
+	function return_APPInfo(data){
+    	localStorage.setItem('apk',data);
+    }
+	
+	
+	// 调用ios原生方法，返回用户列表
+	function return_action(data,data2) {
+		if(data2 == "getMsgs"){
+			flag = data.acess
+			total = data.msgNum
+			sex = data.sex
+			var results = data.chats;
+			$("#users").html("");
+			if(results.length == 0){
+				$("#nobdyTips1").css('display','block');
+			}else{
+				$("#nobdyTips1").css('display','none');
+			}
+			for( var i = 0;i < results.length;i++){
+				var t = $($("#text").html())
+				//资料完整度判断是否正常会员
+				// if(results[i].user.completion < 90){
+				// 	t.find(".icon-crown").css("visibility","hidden");
+				// }
+				//判断是否高级会员
+				if(results[i].user.vip.role){
+					t.find(".icon-crown").show();
+				}
+
+
+				if(switchFlag == 'yes'){
+					t.find(".icon-crown").hide();
+					$('.vip-logo').hide();
+				}
+				if(switchFlag1 == 'yes'){
+					t.find(".icon-crown").hide();
+					$('.vip-logo').hide();
+				}
+				if(results[i].user.avatar){
+					//头像
+					t.find('.mui-media-object').attr('src',results[i].user.avatar);
+				}else{
+					//头像
+					if(sex == 2){
+						t.find('.mui-media-object').attr('src','img/nan01.png');
+					}else if(sex == 1){
+						t.find('.mui-media-object').attr('src','img/nv01.png');
+					}
+
+				}
+				//把当前id记录在标签里面
+				t.find('.mui-media-object').attr('data-id',results[i]._id);
+				t.find('.mui-media-object').attr('data-name',results[i].user.nickname);
+				//昵称
+				if(results[i].user.nickname){
+					var nicknamess = results[i].user.nickname
+					if(nicknamess.length > 8){
+						t.find('.nickName').html(nicknamess.slice(0,8) + "...");
+					}else{
+						t.find('.nickName').html(results[i].user.nickname);
+					}
+				}else{
+					if(sex == 1){
+						t.find('.nickName').html("魅力甜心");
+					}else if(sex == 2 ){
+						t.find('.nickName').html("成功男士");
+					}
+				}
+				if(!results[i].unReaderNews){
+					t.find('.unread').hide()
+				}else{
+					//未读消息条数
+					t.find('.unread').html(results[i].unReaderNews);
+					t.find('.mui-media-object').attr('data-unread',results[i].unReaderNews);
+				}
+
+
+
+				//距离时间
+				t.find('.time').html(time(results[i].last_chat_time));
+				//最新消息的内容
+				t.find('.basicInfo').html(results[i].last_chat_content);
+
+				// if(flag){
+
+				// }else{
+				// 	t.find('.basicInfo').html(results[i].last_chat_content);
+
+				// }
+				// if(data.acess){
+				// 	//最新消息的内容
+				// 	t.find('.basicInfo').html(results[i].last_chat_content);
+
+				// }else{
+				// 	//最新消息的内容
+				// 	t.find('.basicInfo').html("你还没权限看消息列表");
+
+				// }
+				$("#users").append(t);
+			}
+		}
+		//1.0.2版本
+		if(edition = "1.0.2"){
+			$(".icon-crown").hide();
+			// $('.vip-logo').show();
+			// if(results[i].vipLevel == "vip0"){
+			// 	t.find('.vip-logo').hide();
+			// }else if(results[i].vipLevel == "vip1"){
+			// 	t.find('.vip-logo').attr("src","./img/pi_HonourableMember.png");
+			// }else if(results[i].vipLevel == "vip2"){
+			// 	t.find('.vip-logo').attr("src","./img/pic_GoldMember.png");
+			// }else if(results[i].vipLevel == "vip3"){
+			// 	t.find('.vip-logo').attr("src","./img/pic_DiamondMember.png");
+			// }else if(results[i].vipLevel == "vip4"){
+			// 	t.find('.vip-logo').attr("src","./img/pic_CrownMember.png");
+			// }
+		}
+	}
+	// ios原生方法，页面跳转，点击某一个消息
+	//注意 这里使用tap事件会跳转两次，所以用touchstart
+	$('#users').on('tap','.collect-item',function(){
+		userId = $(this).find(".mui-media-object").attr('data-id');
+		if(sex == 2){
+			var newname = "成功男士"
+		}if(sex == 1){
+			var newname = "魅力甜心"
+
+		}
+		name = $(this).find(".mui-media-object").attr('data-name') || newname
+		var thisunr = $(this).find(".mui-media-object").attr('data-unread') || 0
+		var unr = (total -  thisunr) || 0
+		// getInterface().msg_alert($(this).find("img").css("width"))
+		getInterface().bageNum(unr.toString())
+
+		// if(flag){
+		// 	var userId = $(this).find(".mui-media-object").attr('data-id');
+		// 	getInterface().html_jump_href(service+'/imChat.html?personId='+userId, 'yes');
+
+		// }else{
+		// 	//最新消息的内容
+		// 	getInterface().msg_alert("抱歉，您没有发消息的权限，请充值会员")
+		// 	function return_sureMsg(){
+		// 		getInterface().html_jump_href(service+'/upgradeVIP.html', 'no');
+		// 	}
+		// }
+	})
+
+	function leftBtnClick(){
+		getInterface().leftBtnClick();
+	}
+	function return_bageNum(){
+		getInterface().html_jump_href(service+'/imChat.html?personId='+userId+'&name='+name, 'yes');
+	}
+
+	function time(time){
+		var bettween = new Date().getTime() - new Date(time).getTime()
+		var arr = []
+		if(bettween < 1000*60*60){
+			//小于一个小时
+			var min = (parseInt(bettween / 1000 / 60)+1)  + "分钟前"
+			arr.push(min)
+		}else if(bettween < 1000*60*60*24 && bettween > 1000*60*60){
+			//一小时到24小时
+			var hour = Math.floor(bettween / 1000 / 60 / 60) + "小时前"
+			arr.push(hour)
+
+
+		}else if(bettween > 1000*60*60*24){
+			//大于一天
+			var day = Math.floor(bettween / 1000 / 60 / 60 /24) + "天前"
+			arr.push(day)
+
+		}
+		return arr
+	}
+
+	//下拉刷新
+	mui.init({
+	  	pullRefresh : {
+		    container:"#refreshDiv",//下拉刷新容器标识，querySelector能定位的css选择器均可，比如：id、.class等
+		    down : {
+		      style:'circle',//必选，下拉刷新样式，目前支持原生5+ ‘circle’ 样式
+		      color:'#2BD009', //可选，默认“#2BD009” 下拉刷新控件颜色
+		      height:'50px',//可选,默认50px.下拉刷新控件的高度,
+		      range:'100px', //可选 默认100px,控件可下拉拖拽的范围
+		      offset:'0px', //可选 默认0px,下拉刷新控件的起始位置
+		      auto: false,//可选,默认false.首次加载自动上拉刷新一次
+		      callback: callback1
+		    }
+	    }
+	});
+	function callback1(){
+		mui('#refreshDiv').pullRefresh().endPulldown();
+	}
+
+	function reload_table(){
+		// getInterface().msg_alert("sgs");
+		// 调用ios原生方法，请求用户列表
+		getInterface().post_action("getMsgs","","get");
+
+		var chatstate = localStorage.getItem('chatstate');
+		localStorage.setItem('chatstate',0);
+		if(chatstate == 1){
+			getInterface().post_action("getMsgs","","get");
+		}
+	}
+
+
+
+	var btnArray = ['取消', '确认'];
+    $('#users').on('tap', '.mui-btn', function(event) {
+        var elem = this;
+        var li = elem.parentNode.parentNode;
+        mui.confirm('确认删除该条记录？', '', btnArray, function(e) {
+            if (e.index == 1) {
+                var userId = $(li).attr('userId')
+                // getInterface().post_action("unHate",JSON.stringify({id: userId}),'post');
+                li.parentNode.removeChild(li);
+            }else {
+                setTimeout(function() {
+                    mui.swipeoutClose(li);
+                }, 0);
+            }
+        });
+    });
+	//没有搜索结果，跳高级搜索
+	$('#search_btn').on('tap',function(){
+		getInterface().html_jump_href(service+'/search.html', 'no');
+	})
+</script>
+</html>

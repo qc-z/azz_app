@@ -1,0 +1,101 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>我的邀请码</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <link href="css/mui.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+        .mui-popup-text {
+            text-align: left;
+        }
+    </style>
+    <script src="js/zepto.min.js"></script>
+    <script src="js/bbmis.js"></script>
+    <script type="application/javascript"  src="js/hkJS.js"></script>
+</head>
+
+<body>
+
+<div class="code-content">
+    <ul class="mui-table-view" id="upgrade">
+        <li class="mui-table-view-cell">
+            <a class="mui-navigate-right">
+                <span class="top-alert">购买28或90天会员，可获1或3个邀请码</span>
+                <span class="mui-badge noBg go-upgrade">前往升级会员</span>
+            </a>
+        </li>
+    </ul>
+
+    <div id="code-list">
+    </div>
+
+</div>
+<script type="text/template" id="code">
+    <div class="code-item">
+        <span class="code-left">宠爱蜜语会员邀请码</span>
+        <span class="code-right"></span>
+        <p>有效期：<span id="time"></span></p>
+    </div>
+</script>
+<script src="js/mui.min.js"></script>
+<script>
+    $(function(){
+        getInterface().initDataWithArray("#FFFFFF","back","我的邀请码","规则","","#333333","","#7D1B4D");
+    })
+    function leftBtnClick(){
+        getInterface().leftBtnClick();
+    }
+    function rightBtnClick(){
+        mui.alert("什么是邀请码?<br>邀请码是注册的时候输入的一串字符，代表您受邀请注册宠爱蜜语社交平台,如何使用邀请码？<br>1、在平台购买28或90天会员，即可获得1或3个邀请码；<br>2、邀请好友注册时，请正确填写推荐人的邀请码。受邀请人完成注册后，可获得根一般注册方式不同的额外赠品；<br>3、邀请码最终解释权归宠爱蜜语官方。");
+        if($('.mui-popup')){
+            $('.mui-popup-title').text('宠爱蜜语邀请码说明');
+        }
+        }
+
+
+    getInterface().post_action('getCoupon','','get');
+
+    function return_action(data,data2){
+        if( data2=='getCoupon' ){
+            if(data.ret==1){
+                $("#code-list").html('')
+                for(var i=0; i<data.result.length; i++){
+                    var code = $($('#code').html());
+                    code.find('.code-right').text(data.result[i].content);
+                    code.find('#time').text(data.result[i].meta.endAt.split('T')[0]);
+                    $("#code-list").append(code);
+
+                    var endTime = data.result[i].meta.endAt.split('.')[0].replace('T',' ');
+                    var currTime = new Date();
+
+                    // 是否使用
+                    if(!data.result[i].isUse){
+                        $('.code-item').eq(i).append('<img src="img/been_used.png" class="postmark">');
+                        $('.code-item').eq(i).addClass('invalid');
+                    }
+                    // 是否过期
+                    if(Date.parse(endTime)<Date.parse(currTime)){
+                        $('.code-item').eq(i).append('<img src="img/out_date.png" class="postmark">');
+                        $('.code-item').eq(i).addClass('invalid');
+                    }
+
+                    if(data.result[i].methods == 'gift'){
+                        $('.code-item').eq(i).children('.code-left').text('会员三天体验邀请码');
+                    }
+                }
+            }else{
+                getInterface().msg_alert("还没有邀请码哦~");
+            }
+
+        }
+    }
+
+    // 跳转到意见反馈
+    $('#upgrade').on('tap',function(){
+        getInterface().html_jump_href(service+'/paymentVIP.html', 'no');
+    })
+</script>
+</body>
+</html>

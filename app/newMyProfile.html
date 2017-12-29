@@ -1,0 +1,353 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>我的资料</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link href="css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="css/style.css" />
+	<script src="js/zepto.min.js"></script>
+	<script src="js/bbmis.js"></script>
+	<script type="application/javascript"  src="js/hkJS.js"></script>
+	<style>
+		#headPic {
+			border-radius: 6px;
+		}
+		.myProfile .headTitle {
+		    background: #F8F6F6;
+		    color: #333;
+		}
+		.headTitle .xufei {
+		    color: #FA6F57;
+		}
+		.headTitle .mui-navigate-right:after, .mui-push-left:after, .mui-push-right:after{
+    color: #FA6F57;
+}
+	</style>
+</head>
+
+<body>
+	<!--页面主内容区开始-->
+	<div class="mui-page-content myProfile">
+		<div class="mui-scroll">
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell mui-media headTitle" id="upgrade">
+					<a class="mui-navigate-right hideArrowFlag">
+						<img id="headPic" class="mui-media-object mui-pull-left" src="">
+						<div class="mui-media-body">
+							<span id="userName"></span>
+							<p>
+							<span id="isVip" class="mui-badge">普通用户</span>
+							</p>
+							<p style="padding-top: 10px;">
+								<img class="vip-logo" src="./img/pi_HonourableMember.png" style="vertical-align: top;display: none; width: 18px;height: 18px;" alt="">
+								<span id="vipLevel" style="display: none; color: #fff"></span>
+							</p>
+						</div>
+						<span class="mui-badge xufei" id="hint"><img src="img/pic_upgrade-the-VIP.png" class="crownIcon">升级VIP</span>
+					</a>
+				</li>
+				<li class="mui-table-view-cell" id="notice">
+					<a class="mui-navigate-right" id="noticeMess">通知中心</a>
+				</li>
+				<li class="mui-table-view-cell" id="updateInfo">
+			        <a class="mui-navigate-right">修改资料</a>
+			    </li>
+			   	<li class="mui-table-view-cell" id="updatePhoto">
+			        <a class="mui-navigate-right">上传照片</a>
+			    </li>
+			    <li class="mui-table-view-cell" id="balckList">
+			        <a class="mui-navigate-right">黑名单</a>
+			    </li>
+			    <li class="mui-table-view-cell info-title">标签信息</li>
+			    <li class="mui-table-view-cell lookItem" id="iNeed">
+			        <a class="mui-navigate-right">
+			        	我需要的
+						<span class="mui-badge label-bg labelBg1">请选择</span>
+			        </a>
+			    </li>
+			    <li class="mui-table-view-cell lookItem" id="afford">
+			        <a class="mui-navigate-right">
+			        	我能提供的
+						<span class="mui-badge label-bg labelBg2">请选择</span>
+			        </a>
+			    </li>
+			    <li class="mui-table-view-cell lookItem" id="hopeful">
+			        <a class="mui-navigate-right">
+			        	期待的关系
+						<span class="mui-badge label-bg labelBg3">请选择</span>
+			        </a>
+			    </li>
+			    <li class="mui-table-view-cell info-title" id="inviteCodeTitle">会员权限</li>
+			    <li class="mui-table-view-cell" id="inviteCode">
+			        <a class="mui-navigate-right">
+			        	邀请码
+			        </a>
+			    </li>
+			</ul>
+		</div>
+	</div>
+	<!--页面主内容区结束-->
+
+<script src="js/mui.min.js"></script>
+<script src="js/mui.view.js "></script>
+<script type="text/javascript">
+	mui.init();
+	$(function(){
+		getInterface().initDataWithArray("#FFFFFF","back","我的资料","","","#333333","","");
+	})
+
+	var shield1 = 'no';
+	localStorage.setItem('shield1',shield1)
+	/*var u = navigator.userAgent;
+    var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1;
+    var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+    if(isiOS){
+    	getInterface().action_info()
+    	function return_info(data,data2){
+			localStorage.setItem('shield1',data)
+			if(data=='yes'){
+				shield1 = 'yes';
+			}else{
+				shield1 = 'no';
+			}
+		}
+    }*/
+
+    //获取app版本
+    getInterface().post_action("noticeList",'',"get");
+
+    var edition = localStorage.getItem('edition');
+    if(edition == "1.0.2"){
+    	getInterface().action_info()
+    	function return_info(data,data2){
+			localStorage.setItem('shield1',data)
+			if(data=='yes'){
+				shield1 = 'yes';
+			}else{
+				shield1 = 'no';
+			}
+		}
+    }
+	function leftBtnClick(){
+		getInterface().leftBtnClick();
+	}
+
+	// getInterface().post_action("getInfo",{},"get");
+	getInterface().post_action("getInfo",{},"get");
+
+	//是否投放
+	var flag = $('#delivery_btn').hasClass('mui-active');//储存当前的状态
+	$('#delivery_btn').on("tap",function(){
+		if($('#delivery_btn').hasClass('mui-active') == false && flag == true){
+			flag = false;
+		}
+		if($('#delivery_btn').hasClass('mui-active') == true && flag == false){
+			flag = true;
+		}
+		if($('#delivery_btn').hasClass('mui-active') == flag){
+			getInterface().post_action('listSet',JSON.stringify({status:flag}),'post');
+		}
+	});
+
+	//取开关
+	var switchFlag = localStorage.getItem('switchFlag');
+
+	var isVipFlag = false;
+	function return_action(data,data2){
+		if(data2 == 'listSet'){
+		}else if(data2 == 'noticeList'){
+			if(data.unreadNum>0){
+				$("#noticeMess").append('<span class="mui-badge mui-badge-danger">'+data.unreadNum+'</span>');
+			}
+
+		}else if(data2 == 'getInfo'){
+			if(data.result.avatar){
+				$('#headPic').attr('src',data.result.avatar+'?x-oss-process=image/resize,h_65');
+			}else if(data.result.sex==1){
+				$('#headPic').attr('src','img/nan01.png');
+			}else{
+				$('#headPic').attr('src','img/nv01.png');
+			}
+			if(data.result.nickname && data.result.auditContent.nickname=='1'){
+                $('#userName').text(data.result.nickname);
+            }else if(data.result.auditContent && data.result.auditContent.nickname!='1' && data.result.oldName){
+                $('#userName').text(data.result.oldName);
+            }else if(data.result.nickname){
+            	$('#userName').text(data.result.nickname);
+            }else{
+                if(data.result.sex==1){
+                    $('#userName').text("成功男士");
+                }else{
+                    $('#userName').text("魅力甜心");
+                }
+            }
+
+			if(data.result.iNeed){
+				$('.labelBg1').text(data.result.iNeed)
+			}
+			if(data.result.afford){
+				$('.labelBg2').text(data.result.afford)
+			}
+			if(data.result.hopeful){
+				$('.labelBg3').text(data.result.hopeful)
+			}
+
+			if(data.result.traceid.listSet){
+				$('#delivery_btn').addClass('mui-active')
+			}else{
+				$('#delivery_btn').removeClass('mui-active')
+			}
+			userSex = data.result.sex;
+			//1.0.2之前的版本
+			if(data.result.vip.role){
+				$('#isVip').addClass('mui-badge-warning');
+				$('#isVip').text('高级会员');
+				$('#hint').text('会员续费');
+				$('#hiddenSurface').show();
+				$('#hiddenAtten').show();
+				isVipFlag = true;
+			}else{
+				$('#hiddenSurface').hide();
+				$('#hiddenAtten').hide();
+				isVipFlag = false;
+			}
+			//1.0.2版本
+			if(edition == "1.0.2"){
+				$('#isVip').hide();
+				$('.vip-logo').show();
+				$('#vipLevel').show();
+				if(data.result.vipLevel == "vip0"){
+					$('.vip-logo').hide();
+					$('#vipLevel').text("普通用户").css('color','#b88c7a');
+				}else if(data.result.vipLevel == "vip1"){
+					$('.vip-logo').attr("src","./img/pi_HonourableMember.png");
+					$('#vipLevel').text("尊贵会员").css('color','#ac9455');
+
+				}else if(data.result.vipLevel == "vip2"){
+					$('.vip-logo').attr("src","./img/pic_GoldMember.png");
+					$('#vipLevel').text("黄金会员").css('color','#ac9455');
+				}else if(data.result.vipLevel == "vip3"){
+					$('.vip-logo').attr("src","./img/pic_DiamondMember.png");
+					$('#vipLevel').text("钻石会员").css('color','#ac9455');
+				}else if(data.result.vipLevel == "vip4"){
+					$('.vip-logo').attr("src","./img/pic_CrownMember.png");
+					$('#vipLevel').text("至尊皇冠会员").css('color','#ac9455');
+				}
+			}
+
+			if(data.shield=='yes'){
+				$('#sett').hide();
+				$('#isVip').hide();
+				$('#hint').hide();
+				$('.vip-logo').hide();
+				$('#vipLevel').hide();
+				$('#inviteCode').hide();
+			}else{
+				$('#sett').show();
+				// $('#isVip').show();
+				$('#hint').show();
+			}
+
+			if(shield1=='yes'){
+				$('#sett').hide();
+				$('#isVip').hide();
+				$('#hint').hide();
+				$('.vip-logo').hide();
+				$('#vipLevel').hide();
+				$('#inviteCodeTitle').hide();
+				$('#inviteCode').hide();
+			}else{
+				$('#sett').show();
+				// $('#isVip').show();
+				$('#hint').show();
+			}
+		}else{
+			localStorage.setItem('infoSta',1);
+		}
+	}
+	// 跳转到充值VIP
+	if(shield1 == 'no'){//屏蔽了就不能跳转
+		$('#upgrade').on('tap',function(){
+			getInterface().html_jump_href(service+'/app/paymentVIP.html', 'no');
+		});
+	}else{
+		$('.upgrade').unbind();
+		$('.hideArrowFlag').removeClass('mui-navigate-right');
+	}
+	var index;
+	// 我需要的
+	$('#iNeed').on('tap',function(){
+		index = 1
+		getInterface().bottom_alertWithJsonArray(JSON.stringify(["我需要的","经济帮助","浪漫旅行","温馨约会","情感补充","恋爱婚姻","人生指导"]))
+	});
+	$('#afford').on('tap',function(){
+		index = 2
+		getInterface().bottom_alertWithJsonArray(JSON.stringify(["我能提供的","经济帮助","浪漫旅行","温馨约会","情感补充","恋爱婚姻","人生指导"]))
+	});
+	$('#hopeful').on('tap',function(){
+		index = 3
+		getInterface().bottom_alertWithJsonArray(JSON.stringify(["期待的关系","玩伴关系","激情关系","情人关系","恋爱关系","婚姻关系"]))
+	});
+
+	function return_bottomAlert(data){
+		if(index==1){
+			getInterface().post_action("editInfo",JSON.stringify({iNeed:data}),"post");
+			$('.labelBg1').text(data)
+		}else if(index==2){
+			getInterface().post_action("editInfo",JSON.stringify({afford:data}),"post");
+			$('.labelBg2').text(data)
+		}else{
+			getInterface().post_action("editInfo",JSON.stringify({hopeful:data}),"post");
+			$('.labelBg3').text(data)
+		}
+	}
+
+	function reload_mine(){
+		var infoSta = localStorage.getItem('infoSta');
+		var photoSta = localStorage.getItem('photoSta');
+		var upgradeSta = localStorage.getItem('upgradeSta');
+		var payState = localStorage.getItem('payState')
+		var noticeSta = localStorage.getItem('noticeSta')
+		// 存储跳首页变量（避免每次tab点击首页都刷新）
+		localStorage.setItem('infoSta','0');
+		localStorage.setItem('photoSta','0');
+		localStorage.setItem('upgradeSta','0');
+		localStorage.setItem('payState',0)
+		localStorage.setItem('noticeSta',0)
+		if(infoSta==1 || photoSta==1 || upgradeSta==1 || payState==1){
+			//localStorage.setItem('infoSta',1);
+			getInterface().post_action("getInfo",JSON.stringify({userId:""}),"get");
+		}
+		if(noticeSta==1){
+			getInterface().post_action("noticeList",'',"get");
+			$(".mui-badge-danger").remove();
+		}
+	}
+
+	// 跳转到修改资料
+	$('#updateInfo').on('tap',function(){
+		getInterface().html_jump_href(service+'/app/newUpdateInfo.html', 'no');
+	});
+	// 跳转到上传照片男
+	$('#updatePhoto').on('tap',function(){
+			alert(userSex)
+		
+		getInterface().html_jump_href(service+'/app/updatePhoto.html?userSex='+userSex, 'yes');
+	})
+	// balckList
+	$('#balckList').on('tap',function(){
+		getInterface().html_jump_href(service+'/app/blacklist.html', 'no');
+	})
+	// inviteCode
+	$('#inviteCode').on('tap',function(){
+		getInterface().html_jump_href(service+'/app/inviteCode.html', 'no');
+	})
+	$('#notice').on('tap',function(){
+		getInterface().html_jump_href(service+'/app/notice.html', 'no');
+	})
+
+</script>
+</body>
+
+</html>

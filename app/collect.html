@@ -1,0 +1,248 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>收藏</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<meta name="format-detection" content="telephone=no" />
+	<link href="css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" type="text/css" href="css/icons-extra.css" />
+	<link rel="stylesheet" href="css/style.css" />
+	<script src="js/zepto.min.js"></script>
+	<script src="js/bbmis.js"></script>
+	<script type="application/javascript"  src="js/hkJS.js"></script>
+</head>
+
+<body class="whiteBg">
+	<!--页面主内容区开始-->
+	<div class="mui-page-content index-con">
+		<div class="top-title">
+			<div class="integrity" id="fillInfo">
+	            <span class="">信息完整度</span>
+	            <progress max="100" value="" id="ratePro"></progress>
+	            <span id="rate">0%</span>
+	            <p>补全资料达到90%才能提高曝光率、解锁聊天功能哦</p>
+	        </div>
+			<div class="tabTitle">
+				<div class="mui-segmented-control">
+					<a class="mui-control-item mui-active" href="#collect-item1">我关注</a>
+					<a class="mui-control-item" href="#collect-item2">关注我</a>
+				</div>
+			</div>
+		</div>
+
+		<div class="tabCon tabConT">
+			<div id="collect-item1" class="mui-control-content mui-active">
+				<ul class="mui-table-view" id="collectList">
+
+				</ul>
+				<div class="nobdyTips nobdyTips_collect" id='nobdyTips1'>
+					<img src="./img/nolove.png" alt="">
+					<p class="noresult">您暂未有喜欢的人</p>
+					<p class="changeTerm"></p>
+					<!-- <button id='search_btn'>看看附近有谁</button> -->
+				</div>
+			</div>
+			<div id="collect-item2" class="mui-control-content">
+				<ul class="mui-table-view" id="collectList2">
+				</ul>
+				<div class="nobdyTips nobdyTips_collect" id='nobdyTips2'>
+					<img src="./img/nolove.png" alt="">
+					<p class="noresult">竟然是空的</p>
+					<p class="changeTerm"></p>
+					<!-- <button id='cared_btn' cla>升级会员，让更多人看到你</button> -->
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<!--页面主内容区结束-->
+	<script type="text/template" id="listItem">
+		<li class="mui-table-view-cell mui-media collect-item">
+	        <a class="coll-item" href="javascript:;">
+	            <img id="photo" class="mui-media-object mui-pull-left" src="">
+	            <div class="mui-media-body">
+            		<span id="nickname"></span>
+            		<p class="basicInfo" style="display:inline-block;margin-bottom:0;">
+            			<span class="age"></span><span class="addr"></span>
+            		</p>
+	                <p class='mui-ellipsis' id="character"></p>
+	                <div><span class="mui-badge isVIP"></span></div>
+	            </div>
+	        </a>
+	        <span class="mui-icon-extra mui-icon-extra-heart-filled "></span>
+	    </li>
+	</script>
+	<script src="js/mui.min.js"></script>
+	<script type="text/javascript">
+		mui.init();
+		$(function(){
+			getInterface().initDataWithArray("#FFFFFF","back","我的关注","","","#333333","","");
+		})
+		function leftBtnClick(){
+			getInterface().leftBtnClick();
+		}
+
+	    //获取app版本
+	    getInterface().getAPPInfo();
+
+	    var edition;
+	    function return_APPInfo(data){
+	    	edition = data;
+	    }
+
+		var shield1 = localStorage.getItem('shield1')
+		// 关注列表
+		getInterface().post_action("careList",'','get');
+
+		// 得到自己信息
+		getInterface().post_action("getInfo",'','get');
+
+
+		//我喜欢
+		$('#collect-item1').on('tap','.mui-icon-extra-heart-filled',function(){
+			var userId = $(this).siblings('a').find(".mui-media-object").attr('data-id');
+			if( $(this).attr('onOff') =='true' ){
+				$(this).css('color','#ccc');
+				$(this).attr('onOff', false);
+				getInterface().post_action('uncare',JSON.stringify({id: userId}),'post');
+				getInterface().post_action("careList",'','get');
+			}else{
+
+				$(this).css('color','#F6715B');
+				$(this).attr('onOff', true);
+			}
+
+			window.location.reload();
+		})
+
+		function return_action(data,data2){
+			if(data2=='careList'){
+				showStarList("#collectList", data.care);
+				if(data.care.length == 0){
+					$("#nobdyTips1").css('display','block');
+					$('#collectList').remove();
+				}else{
+					$("#nobdyTips1").css('display','none');
+				}
+
+
+				showStarList("#collectList2", data.cared);
+				if(data.cared.length == 0){
+					$("#nobdyTips2").css('display','block');
+					$('#collectList2').remove();
+				}else{
+					$("#nobdyTips2").css('display','none');
+				}
+
+				//初始化是喜欢我
+				for(var i=0; i<data.cared.length; i++){
+					$('#collectList2 .mui-icon-extra-heart-filled')[i].style.color = '#ccc'
+				}
+				for(i in data.care){
+					for(j in data.cared){
+						if( data.care[i]._id.indexOf(data.cared[j]._id) != -1){
+							console.log($('#collectList2 .mui-icon-extra-heart-filled')[j])
+							$('#collectList2 .mui-icon-extra-heart-filled')[j].style.color = '#f6715b'
+						}
+					}
+				}
+
+			}else if(data2=='uncare'){
+				if(data.ret){
+					showStarList("#collectList", data.care);
+					showStarList("#collectList2", data.cared);
+				}
+			}else{
+				// 设置完整度
+				if(data.result.completion > 90){
+					$('.integrity').css('display','none');
+					$('.tabCon').css('margin-top','38px');
+				}else{
+					$('.integrity').css('display','block');
+				}
+				$('#ratePro').attr('value',data.result.completion);
+				$('#rate').text(data.result.completion+'%');
+
+				if(data.shield=='yes'){
+					$('.mui-badge-warning').hide();
+					$('#fillInfo').hide();
+				}else{
+					$('.mui-badge-warning').show();
+				}
+				myId = data.result._id;
+			}
+
+		}
+
+		function showStarList(sel,res){
+			var temp = $(sel).find(".collect-item");
+			var results = res;
+			// $(".nobdyTips").css('display','none');
+			$(sel).html("");
+			for(var i=0; i<results.length; i++){
+				var t = $($("#listItem").html())
+				if(results[i].avatar){
+					t.find('#photo').attr('src',results[i].avatar);
+				}else if(results[i].sex==1){
+					t.find('#photo').attr('src','img/nan01.png');
+				}else{
+					t.find('#photo').attr('src','img/nv01.png');
+				}
+
+				t.find('#photo').attr('data-id',results[i]._id);
+				t.find('.addr').html(results[i].city);
+				if(results[i].age){
+					t.find('.age').html(results[i].age+'岁/');
+				}
+				if(results[i].nickname){
+					t.find('#nickname').html(results[i].nickname);
+				}else{
+					t.find('#nickname').html(results[i]._id);
+				}
+				t.find('#character').html(results[i].character);
+				t.find('.mui-icon-extra-heart-filled').css('color','#f6715b');
+				t.find('.mui-icon-extra-heart-filled').attr('onOff',true);
+				$(sel).append(t);
+
+				if(results[i].vip.role){
+					t.find('.isVIP').addClass('mui-badge-warning');
+					t.find('.isVIP').text('高级');
+				}else{
+					t.find('.isVIP').html('');
+				}
+				//1.0.2版本
+				if(edition = "1.0.2"){
+					t.find('.isVIP').remove();
+				}
+			}
+			if(shield1=='yes'){
+				$('.mui-badge-warning').hide();
+				$('#fillInfo').hide();
+			}else{
+				$('.mui-badge-warning').show();
+			}
+		}
+
+		// ios原生方法，页面跳转到个人主页
+		$('.tabCon').on('tap','.collect-item a',function(e){
+			e.preventDefault();
+			var userId = $(this).find(".mui-media-object").attr('data-id');
+			getInterface().html_jump_href(service+'/personal.html?personId='+userId+'&myId='+myId, 'yes');
+		})
+		// 跳转到编辑资料
+		$('#fillInfo').on('tap',function(){
+			getInterface().html_jump_href(service+'/updateInfo.html', 'no');
+		})
+		//没有搜索结果，跳高级搜索
+		$('#search_btn').on('tap',function(){
+			getInterface().html_jump_href(service+'/search.html', 'no');
+		})
+		//没有喜欢我的人，跳升级会员
+		$('#cared_btn').on('tap',function(){
+			getInterface().html_jump_href(service+'/upgradeVIPPay.html', 'no');
+		})
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>通知中心</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link href="css/mui.min.css" rel="stylesheet" />
+	<link href="css/mui.picker.min.css" rel="stylesheet" />
+	<link href="css/mui.poppicker.css" rel="stylesheet" />
+	<link rel="stylesheet" type="text/css" href="css/style.css"/>
+
+</head>
+
+<body>
+	<div class="chatBox notice" id="notice">
+
+	</div>
+</body>
+<script type="text/template" id="messItem">
+	<div class="cut-off"></div>
+	<div class="sender">
+		<div>
+			<img src="img/logov1.0-72px.png">
+		</div>
+	  	<div>
+			<div class="left_triangle"></div>
+			<span class="mess"></span>
+	   	</div>
+	</div>
+</script>
+<script type="application/javascript"  src="js/hkJS.js"></script>
+<script type="text/javascript" src="js/zepto.min.js"></script>
+<script src="js/mui.min.js"></script>
+<script src="js/mui.picker.min.js"></script>
+<script src="js/mui.poppicker.js"></script>
+<script>
+	mui.init();
+	getInterface().initDataWithArray("#FFFFFF","back","通知中心","","","#333333","","");
+
+	function leftBtnClick(){
+		getInterface().leftBtnClick();
+	}
+	localStorage.setItem('noticeSta',1)
+	getInterface().post_action("noticeList",'',"get");
+	// 调用ios原生方法，返回用户列表
+	function return_action(data,data2) {
+		if(data.list.length>0){
+			var results = data.list;
+			for(var i=0; i<results.length; i++){
+				var t = $($("#messItem").html())
+				t.find('.mess').text(results[i].content);
+				$(t[0]).text(results[i].locationTime)
+				$('#notice').append(t)
+			}
+			if($('#notice .sender').length==0){
+				$('#notice').append('<p class="phoAlert">还没有系统消息哦~</p>')
+			}
+		}
+	}
+</script>
+</html>

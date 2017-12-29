@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en" class="feedback">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<title>联系客服</title>
+	<link rel="stylesheet" type="text/css" href="css/mui.min.css" />
+	<link rel="stylesheet" type="text/css" href="css/feedback.css" />
+	<link rel="stylesheet" type="text/css" href="css/style.css" />
+	<script src="js/zepto.min.js"></script>
+	<script src="js/bbmis.js"></script>
+	<script type="application/javascript"  src="js/hkJS.js"></script>
+</head>
+
+<body>
+	<div class="mui-content">
+
+		<div class="row mui-input-row">
+			<textarea id='question' class="mui-input-clear question" placeholder="(必填)请详细描述你的问题和意见..."></textarea>
+		</div>
+		<p>图片(选填,提供问题截图,总大小10M以下)</p>
+		<div id='image-list' class="row image-list">
+			<div class="image-item">
+				<div id="updatePic">+</div>
+			</div>
+		</div>
+		<div class="mui-input-row contactBox" style="margin-top:10px;">
+			<div class="mui-inline">邮箱地址</div>
+			<input id='email' type="email" class="mui-input-clear contact mui-inline" placeholder="(必填,方便我们联系你 )" />
+		</div>
+		<div class="submit">
+			<button id="submit" class="mui-btn mui-pull-right">提交</button>
+		</div>
+
+	</div>
+	<script src="js/mui.min.js"></script>
+	<script type="text/javascript">
+		mui.init();
+		mui('.mui-scroll-wrapper').scroll();
+		$(function(){
+			getInterface().initDataWithArray("#FFFFFF","back","联系客服","","","#333333","","#333333");
+		})
+		function leftBtnClick(){
+			getInterface().leftBtnClick();
+		}
+
+		$('#updatePic').on('tap',function(){
+			getInterface().post_photo('feedback/','','');
+		})
+		function return_photo(data){
+			$('#updatePic').remove();
+			var pic = '<img id="feedbackImg" src="'+data+'">'
+			$('.image-item').append(pic);
+			getInterface().post_action("getsts",'',"get");
+		}
+
+
+
+		$('#submit').on('tap',function(){
+			var data={
+				info: $('#question').val(),
+				photo: $('#feedbackImg').attr('src'),
+				mobile: $('#contact').val(),
+				email: $('#email').val()
+			}
+			var email= data.email;
+			if(data.info){
+				if(!email.match(/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/)){
+					getInterface().msg_alert("请输入正确的邮箱格式！");
+				}else{
+					getInterface().post_action("feedback",JSON.stringify(data),"post");
+				}
+			}else{
+				getInterface().msg_alert("请填写描述信息！");
+			}
+
+			/*if(!email.match(/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/)){
+				getInterface().msg_alert("请输入正确的邮箱格式！");
+			}else{
+				if(data.info){
+					getInterface().post_action("feedback",JSON.stringify(data),"post");
+				}else{
+					getInterface().msg_alert("请填写描述信息！");
+				}
+			}*/
+
+
+		})
+
+		function return_action(data,data2){
+			if(data2 == 'feedback'){
+				if(data.ret==1){
+					getInterface().msg_alert("谢谢您的意见反馈，我们将在24小时内给您回复！");
+					$('#question').val('');
+					$('#email').val('');
+					$('#feedbackImg').remove();
+					$('.image-item').append('<div id="updatePic">+</div>');
+				}else{
+					getInterface().msg_alert(data.msg);
+				}
+			}
+		}
+	</script>
+</body>
+
+</html>

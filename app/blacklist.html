@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>黑名单</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <meta name="format-detection" content="telephone=no" />
+    <link href="css/mui.min.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="css/icons-extra.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="js/zepto.min.js"></script>
+    <script src="js/bbmis.js"></script>
+    <script type="application/javascript"  src="js/hkJS.js"></script>
+</head>
+
+<body>
+    <!--页面主内容区开始-->
+    <div class="mui-page-content">
+         <div class="mui-control-content mui-active">
+            <ul class="mui-table-view" id="blackList">
+            </ul>
+        </div>
+        <div class="nobdyTips nobdyTips_collect" id='nobdyTips1'>
+            <p class="noresult">未有黑名单</p>
+            <p class="changeTerm"></p>
+            <!-- <button id='search_btn'>看看附近有谁</button> -->
+        </div>
+    </div>
+    <!--页面主内容区结束-->
+    <script type="text/template" id="code">
+        <li class="mui-table-view-cell mui-media collect-item">
+            <div class="mui-slider-right mui-disabled">
+                <a class="mui-btn mui-btn-red">取消屏蔽</a>
+            </div>
+            <a class="mui-slider-handle coll-item" href="javascript:;">
+                <img id="photo" class="mui-media-object mui-pull-left" src="">
+                <div class="mui-media-body">
+                    <span id="nickname"></span>
+                    <p class="basicInfo">
+                        <span class="addr"></span><span class="age"></span><span class="lovePrice"></span>
+                    </p>
+                    <p class='mui-ellipsis' id="character"></p>
+                </div>
+            </a>
+        </li>
+    </script>
+    <script src="js/mui.min.js"></script>
+    <script type="text/javascript">
+        mui.init();
+        $(function(){
+            getInterface().initDataWithArray("#FFFFFF","back","黑名单","","","#333333","","");
+        })
+        function leftBtnClick(){
+            getInterface().leftBtnClick();
+        }
+        // 关注列表
+        getInterface().post_action("hateList",'','get');
+        function return_action(data,data2){
+            if(data2=='hateList'){
+                $("#blackList").html('')
+                for(var i=0; i<data.hates.length; i++){
+                    var code = $($('#code').html());
+                    code.attr('userId',data.hates[i]._id);
+                    code.find('#photo').attr('src',data.hates[i].avatar);
+                    code.find('#photo').attr('userId',data.hates[i]._id);
+                    code.find('#nickname').text(data.hates[i].nickname);
+                    code.find('.addr').text(data.hates[i].addr+'/');
+                    code.find('.age').text(data.hates[i].age+'岁/');
+                    code.find('.lovePrice').html(data.hates[i].lovePrice);
+                    $("#blackList").append(code);
+                }
+                if(data.hates.length == 0){
+                    $("#nobdyTips1").css('display','block');
+                }else{
+                    $("#nobdyTips1").css('display','none');
+                }
+            }else{
+                if(data.ret==1){
+                    localStorage.setItem('balckTag',1)
+                    getInterface().msg_alert("操作成功！");
+                }
+            }
+        }
+
+        var btnArray = ['取消', '确认'];
+        $('#blackList').on('tap', '.mui-btn', function(event) {
+            var elem = this;
+            var li = elem.parentNode.parentNode;
+            mui.confirm('确认删除该条记录？', '黑名单', btnArray, function(e) {
+                if (e.index == 1) {
+                    var userId = $(li).attr('userId')
+                    getInterface().post_action("unHate",JSON.stringify({id: userId}),'post');
+                    li.parentNode.removeChild(li);
+                }else {
+                    setTimeout(function() {
+                        mui.swipeoutClose(li);
+                    }, 0);
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

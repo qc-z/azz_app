@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en" class="feedback">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>其他原因</title>
+    <link rel="stylesheet" type="text/css" href="css/mui.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/feedback.css" />
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <script src="js/zepto.min.js"></script>
+    <script src="js/bbmis.js"></script>
+    <script type="application/javascript"  src="js/hkJS.js"></script>
+</head>
+
+<body>
+    <div class="mui-content">
+
+        <div class="row mui-input-row">
+            <textarea id='question' class="mui-input-clear question" placeholder="请输入原因"></textarea>
+            <div id='image-list' class="row image-list">
+            <div class="image-item" style="margin-bottom:0;float: left">
+                    <div id="updatePic" style="line-height:48px;display: inline-block;">+</div>
+                </div>
+                <span style="display: inline-block;color:#8f8f94;padding:22px">可添加图片说明</span>
+            </div>
+        </div>
+
+        <!-- <div class="mui-input-row contactBox" style="margin-top:10px;">
+            <div class="mui-inline">邮箱地址</div>
+            <input id='email' type="email" class="mui-input-clear contact mui-inline" placeholder="(必填,方便我们联系你 )" />
+        </div> -->
+        <div class="submit">
+            <button id="submit" class="mui-btn mui-pull-right">提交</button>
+        </div>
+
+    </div>
+    <script src="js/mui.min.js"></script>
+    <script type="text/javascript">
+      mui.init();
+        mui('.mui-scroll-wrapper').scroll();
+        $(function(){
+            getInterface().initDataWithArray("#FFFFFF","back","举报其他原因","","","#333333","","#333333");
+        })
+        function leftBtnClick(){
+            getInterface().leftBtnClick();
+        }
+
+        $('#updatePic').on('tap',function(){
+            getInterface().post_photo('feedback/','','');
+        })
+        function return_photo(data){
+            $('#updatePic').remove();
+            var pic = '<img id="feedbackImg" src="'+data+'">'
+            $('.image-item').append(pic);
+            getInterface().post_action("getsts",'',"get");
+        }
+        var userId = getQueryString('userId')[0].split('=')[1];
+
+
+
+
+        $('#submit').on('tap',function(){
+            var data={
+                id: userId,
+                content: $('#question').val(),
+                imgUrl: $('#feedbackImg').attr('src')
+                // mobile: $('#contact').val(),
+                // email: $('#email').val()
+            }
+            var email= data.email;
+            if(data.content){
+                getInterface().post_action("report",JSON.stringify(data),"post");
+            }else{
+                getInterface().msg_alert("请填写描述信息！");
+            }
+
+            /*if(!email.match(/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/)){
+                getInterface().msg_alert("请输入正确的邮箱格式！");
+            }else{
+                if(data.info){
+                    getInterface().post_action("feedback",JSON.stringify(data),"post");
+                }else{
+                    getInterface().msg_alert("请填写描述信息！");
+                }
+            }*/
+
+
+        })
+
+        function return_action(data,data2){
+            if(data2 == 'report'){
+                if(data.ret==1){
+                    getInterface().msg_alert("举报成功，我们将在24小时内给您回复！");
+                    $('#question').val('');
+                    // $('#email').val('');
+                    $('#feedbackImg').remove();
+                    $('.image-item').append('<div id="updatePic">+</div>');
+                }else{
+                    getInterface().msg_alert(data.msg);
+                }
+            }
+        }
+        /*function return_sureMsg(){
+            getInterface().leftBtnClick();
+        }*/
+    </script>
+</body>
+
+</html>

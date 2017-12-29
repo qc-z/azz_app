@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>设置</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link href="css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="css/style.css" />
+	<script src="js/zepto.min.js"></script>
+	<script src="js/bbmis.js"></script>
+	<script type="application/javascript"  src="js/hkJS.js"></script>
+</head>
+
+<body>
+
+	<!--页面主内容区开始-->
+	<div class="mui-page-content about">
+		<div class="logo">
+			<h5>宠爱蜜语</h5>
+			<p id="versionText"></p>
+			<img src="img/logov1.0-72px.png" width="120">
+		</div>
+		<div class="about-con">
+			<h4>我们的使命</h4>
+			<p>宠爱致力于为成功男士与魅力女士搭建一个高效、快捷的约会平台。宠爱可以帮助用户快速确立约会意向，过滤没有经济实力的用户，大大提高了约会的成功率和满意度</p>
+		</div>
+		<ul class="mui-table-view">
+			<li class="mui-table-view-cell" id="version">
+		        <a href="###" class="mui-navigate-right">
+					<div class="mui-media-body">
+						版本更新
+					</div>
+					<!-- <span class="mui-badge mui-badge-danger">new</span> -->
+				</a>
+		    </li>
+		   	<li class="mui-table-view-cell" id="helpPage">
+		        <a class="mui-navigate-right">帮助</a>
+		    </li>
+		</ul>
+		<footer class="copyRight">
+			<p id="p1">约会注意事项及防骗提醒</p>
+			<p id="p2">《用户协议》</p>
+		</footer>
+	</div>
+
+	<script src="js/mui.min.js"></script>
+	<script type="text/javascript">
+		mui.init();
+		$(function(){
+			getInterface().initDataWithArray("#FFFFFF","back","关于","","","#333333","","");
+		})
+		var shield1 = localStorage.getItem('shield1');
+		function leftBtnClick(){
+			getInterface().leftBtnClick();
+		}
+		getInterface().getAPPInfo();
+		var edition;
+	    function return_APPInfo(data){
+	    	edition = data;
+	    }
+		$('#versionText').text(edition)
+
+		$('#helpPage').on('tap',function(){
+			getInterface().html_jump_href(service+'/help.html', 'none');
+		})
+		$('#p1').on('tap',function(){
+			getInterface().html_jump_href(service+'/remind.html', 'none');
+		})
+		$('#p2').on('tap',function(){
+			getInterface().html_jump_href(service+'/agreement.html', 'none');
+		})
+		$('#version').on('tap',function(){
+			getInterface().getNewVersionAPP();
+		})
+		if(shield1=='yes'){
+			$('.mui-table-view').hide()
+		}
+	</script>
+</body>
+
+
+
+</html>

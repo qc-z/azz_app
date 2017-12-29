@@ -1,0 +1,522 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>上传照片</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <link href="css/mui.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="js/zepto.min.js"></script>
+    <script src="js/bbmis.js"></script>
+    <script type="application/javascript"  src="js/hkJS.js"></script>
+</head>
+
+<body class="whiteBg">
+    <div class="mui-page-content" id="updatePhotoWrap">
+        <div class="integrity">
+            <span class="">信息完整度</span>
+            <progress max="100" value="0" id="ratePro"></progress>
+            <span id="rate">0%</span>
+            <p>补全资料达到90%才能提高曝光率、解锁聊天功能哦</p>
+        </div>
+        <div class="photo">
+            <div class="title">
+                <span class="text-primary">公开照</span>&nbsp;<i class="text-gray">(最多6张)</i>
+            </div>
+            <div class="mui-row picBox" id="photoPub">
+                <div class="mui-col-sm-4 mui-col-xs-4 pho">
+
+                </div>
+                <div class="mui-col-sm-4 mui-col-xs-4" id="updatePhoto">
+                    <span></span>
+                </div>
+            </div>
+        </div>
+        <div class="photo">
+            <div class="title">
+                <span class="text-primary">私密照</span>&nbsp;<i class="text-gray">(最多6张)</i>
+            </div>
+            <div class="mui-row" id="photoPri">
+                <div class="mui-col-sm-4 mui-col-xs-4 pho">
+                </div>
+                <div class="mui-col-sm-4 mui-col-xs-4" id="updatePhotoPri">
+                    <span></span>
+                </div>
+            </div>
+        </div>
+        <div class="photoT mui-row">
+            <div class="title">
+                <span class="text-primary">生活照</span>&nbsp;<i class="text-gray">(最多1张)</i>
+            </div>
+            <div class="mui-col-sm-7 mui-col-xs-7 " id="lifePho">
+                <div class="pho">
+                    <span class="updatePho2"></span>
+                </div>
+            </div>
+        </div>
+        <div class="photoT mui-row">
+            <div class="title">
+                <span class="text-primary">旅游照</span>&nbsp;<i class="text-gray">(最多1张)</i>
+            </div>
+            <div class="mui-col-sm-7 mui-col-xs-7 pho" id="tourPho">
+                <div class="pho">
+                    <span class="updatePho2"></span>
+                </div>
+            </div>
+        </div>
+        <div class="photoT mui-row">
+            <div class="title">
+                <span class="text-primary">座驾照</span>&nbsp;<i class="text-gray">(最多1张)</i>
+            </div>
+            <div class="mui-col-sm-7 mui-col-xs-7 pho" id="carPho">
+                <div class="pho">
+                    <span class="updatePho2"></span>
+                </div>
+            </div>
+        </div>
+        <div class="photoT mui-row">
+            <div class="title">
+                <span class="text-primary">豪宅照</span>&nbsp;<i class="text-gray">(最多1张)</i>
+            </div>
+            <div class="mui-col-sm-7 mui-col-xs-7 pho" id="housePho">
+                <div class="pho">
+                    <span class="updatePho2"></span>
+                </div>
+            </div>
+        </div>
+        <div class="photoT mui-row">
+            <div class="title">
+                <span class="text-primary">奢物照</span>&nbsp;<i class="text-gray">(最多1张)</i>
+            </div>
+            <div class="mui-col-sm-7 mui-col-xs-7 pho" id="expPho">
+                <div class="pho">
+                    <span class="updatePho2"></span>
+                </div>
+            </div>
+        </div>
+        <div class="photoT mui-row">
+            <div class="title">
+                <span class="text-primary">运动照</span>&nbsp;<i class="text-gray">(最多1张)</i>
+            </div>
+            <div class="mui-col-sm-7 mui-col-xs-7 pho" id="sportPho">
+                <div class="pho">
+                    <span class="updatePho2"></span>
+                </div>
+            </div>
+        </div>
+        <div class="photoT mui-row">
+            <div class="title">
+                <span class="text-primary">工作照</span>&nbsp;<i class="text-gray">(最多1张)</i>
+            </div>
+            <div class="mui-col-sm-7 mui-col-xs-7 pho" id="workPho">
+                <div class="pho">
+                    <span class="updatePho2"></span>
+                </div>
+            </div>
+        </div>
+        <div class="photoT mui-row">
+            <div class="title">
+                <span class="text-primary">泳衣照</span>&nbsp;<i class="text-gray">(最多1张)</i>
+            </div>
+            <div class="mui-col-sm-7 mui-col-xs-7 pho" id="swimwearPho">
+                <div class="pho">
+                    <span class="updatePho2"></span>
+                </div>
+            </div>
+        </div>
+        <div class="photoT mui-row">
+            <div class="title">
+                <span class="text-primary">素颜照</span>&nbsp;<i class="text-gray">(最多1张)</i>
+            </div>
+            <div class="mui-col-sm-7 mui-col-xs-7 pho" id="looksPho">
+                <div class="pho">
+                    <span class="updatePho2"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="js/mui.min.js"></script>
+<script src="js/mui.zoom.js"></script>
+<script src="js/mui.previewimage.js"></script>
+<script>
+    $(function(){
+        getInterface().initDataWithArray("#FFFFFF","back","上传照片","","","#333333","","");
+    })
+    function leftBtnClick(){
+        getInterface().leftBtnClick();
+    }
+    // mui预览图片
+	mui.previewImage();
+    var userSex = window.location.search.split('=')[1];
+
+    var myInfo = JSON.parse(localStorage.getItem('myInfo'));
+    var headPic;
+    if(myInfo.result.avatar){
+        headPic = '';
+    }else{
+        headPic = "newGay";
+    }
+
+    getInterface().post_action("getInfo",{},"get");
+    function return_action(data,data2){
+        if(data2 == 'getInfo'){
+            $('#ratePro').attr('value',data.result.completion);
+            $('#rate').text(data.result.completion+'%');
+            localStorage.setItem('completion',data.result.completion)
+            if(data.result.completion >= 90){
+                $('.integrity').css('display','none');
+            }else{
+                $('.integrity').css('display','block');
+            }
+            var res = data.result;
+
+            //根据性别渲染照片
+            if(res.sex == 1){
+                $('#looksPho').parent('.photoT').hide();
+                $('#sportPho').parent('.photoT').hide();
+                $('#workPho').parent('.photoT').hide();
+                $('#swimwearPho').parent('.photoT').hide();
+                $('#carPho').parent('.photoT').show();
+                $('#housePho').parent('.photoT').show();
+                $('#expPho').parent('.photoT').show();
+                // 渲染公开照
+                loadPic('#photoPub',res.photoPub,'',6,1,'updatePhoto');
+                // 渲染私密照
+                loadPic('#photoPri',res.photoPri,'common',6,2,'updatePhotoPri');
+                //渲染生活照
+                loadPic('#lifePho',res.photoPri,'life',1,3,'#lifePho .updatePho2');
+                // 渲染旅游照
+                loadPic('#tourPho',res.photoPri,'tour',1,4,'#tourPho .updatePho2');
+                // 渲染座驾照
+                loadPic('#carPho',res.photoPri,'car',1,5,'#carPho .updatePho2');
+                // 渲染豪宅照
+                loadPic('#housePho',res.photoPri,'house',1,5,'#housePho .updatePho2');
+                // 渲染豪宅照
+                loadPic('#expPho',res.photoPri,'goods',1,5,'#expPho .updatePho2');
+            }else{
+                $('#carPho').parent('.photoT').hide();
+                $('#housePho').parent('.photoT').hide();
+                $('#expPho').parent('.photoT').hide();
+                $('#looksPho').parent('.photoT').show();
+                $('#sportPho').parent('.photoT').show();
+                $('#workPho').parent('.photoT').show();
+                $('#swimwearPho').parent('.photoT').show();
+                // 渲染公开照
+                loadPic('#photoPub',res.photoPub,'',6,1,'updatePhoto');
+                // 渲染私密照
+                loadPic('#photoPri',res.photoPri,'common',6,2,'updatePhotoPri');
+                //渲染生活照
+                loadPic('#lifePho',res.photoPri,'life',1,3,'#lifePho .updatePho2');
+                // 渲染旅游照
+                loadPic('#tourPho',res.photoPri,'tour',1,4,'#tourPho .updatePho2');
+                // 素颜
+                loadPic('#looksPho',res.photoPri,'looks',1,8,'#looksPho .updatePho2');
+                // 运动
+                loadPic('#sportPho',res.photoPri,'sport',1,9,'#sportPho .updatePho2');
+                // 工作
+                loadPic('#workPho',res.photoPri,'work',1,10,'#workPho .updatePho2');
+                // 泳衣
+                loadPic('#swimwearPho',res.photoPri,'swimwear',1,11,'#swimwearPho .updatePho2');
+            }
+
+            // 如果没有头像且第一张公开照审核通过，默认第一张公开照是头像 && res.photoPub[0].enable----
+            // alert("头像:"+res.avatar+'====公开照:'+ res.photoPub.length+'第一张:'+res.photoPub[0].addr+'==='+res.photoPub[1].addr+'==='+res.photoPub[2].addr)
+            /*var headP =
+            if(res.avatar && res.photoPub.length>0 && res.avatar.indexOf() == res.photoPub[0].addr){
+                getInterface().notice_headImage(res.photoPub[0].addr);
+                $('.setPic').eq(0).text('头像');
+            }*/
+        }else if(data2 == 'delePub'){
+            if(data.ret== 1){
+                getInterface().msg_alert("删除成功！")
+            }else{
+                getInterface().msg_alert(data.err);
+            }
+        }else if(data2 == 'delePri'){
+            if(data.ret == 1){
+                getInterface().msg_alert("删除成功！")
+            }else{
+                getInterface().msg_alert(data.err);
+            }
+        }else if(data2 == 'setAvatar'){
+            if(data.ret == 1){
+                localStorage.setItem('photoSta',1);
+                getInterface().msg_alert("头像设置成功")
+            }
+        }
+    }
+
+    //ios原生方法上传照片后的回调
+    function return_photo(data,data2){
+        if(data.indexOf('public')!=-1){
+            if(headPic == 'newGay'){
+                headPic ='';
+                localStorage.setItem('photoSta',1);
+                getInterface().notice_headImage(data);
+                window.location.reload();
+            }
+            showPic(data,'#updatePhoto',6,'#photoPub','uploadPub','',1);
+        }else{
+            // alert(data2)
+            if(data2 == 'common'){
+                showPic(data,'#updatePhotoPri',6,'#photoPri','photoPri',data2,2);
+            }else if(data2 == 'life'){
+                showPic(data,'',1,'#lifePho','photoPri',data2,3);
+            }else if(data2 == 'tour'){
+                showPic(data,'',1,'#tourPho','photoPri',data2,4);
+            }else if(data2 == 'car'){
+                showPic(data,'',1,'#carPho','photoPri',data2,5);
+            }else if(data2 == 'house'){
+                showPic(data,'',1,'#housePho','photoPri',data2,6);
+            }else if(data2 == 'goods'){
+                showPic(data,'',1,'#expPho','photoPri',data2,7);
+            }else if(data2 == 'looks'){
+                showPic(data,'',1,'#looksPho','photoPri',data2,8);
+            }else if(data2 == 'sport'){
+                showPic(data,'',1,'#sportPho','photoPri',data2,9);
+            }else if(data2 == 'work'){
+                showPic(data,'',1,'#workPho','photoPri',data2,10);
+            }else if(data2 == 'swimwear'){
+                showPic(data,'',1,'#swimwearPho','photoPri',data2,11);
+            }
+        }
+    }
+    //上传照片后显示在页面： data返回的url，sel上传图片的按钮，num上传几张，fsel放图片的盒子，url接口地址，data2私照类型
+    function showPic(data,sel,num,fsel,url,data2,group){
+        //num=6就是公开照和私密照，其他就是只上传一张的生活照等
+        if(num == 6){
+            var item = '<div class="mui-col-sm-4 mui-col-xs-4 pho"><img src="'+ data+'?x-oss-process=image/resize,h_300' +'" data-preview-src="" data-preview-group="'+group+'"><span class="mui-icon mui-icon-close"></span><div class="shadow">审核中...</div></div>';
+            $(fsel).prepend(item);
+            if($('.pho').length == num || $(fsel).find('.pho').length>=num){
+                $(sel).remove();
+            }
+        }else{
+            // alert("显示私照")
+            var item = '<img src="'+ data+'?x-oss-process=image/resize,h_300' +'" data-preview-src="" data-preview-group="'+group+'"><span class="mui-icon mui-icon-close"></span><div class="shadow">审核中...</div>';
+            $(fsel).find('.pho').prepend(item);
+            // alert($(fsel).get(0).outerHTML);
+        }
+        getInterface().post_action(url,JSON.stringify({url:data,category:data2}),"post");
+    }
+    //加载已有的照片：sel选择器，res数据，type特殊类型，num照片数量，group预览大图时分组，btnId上传按钮
+    function loadPic(sel,res,type,num,group,btnId){
+        var temp = $(sel).find('.pho');
+        if(sel=='#photoPub'){
+            temp.prepend('<img src="" data-preview-src="" data-preview-group="1"><span class="mui-icon mui-icon-close"></span><span class="setPic">设为头像</span><div class="shadow">审核中...</div>')
+        }else{
+            temp.prepend('<img src="" data-preview-src="" data-preview-group="1"><span class="mui-icon mui-icon-close"></span><div class="shadow">审核中...</div>')
+        }
+        var photos = res;
+        $(sel).html('')
+        for( var i in photos ){
+            // 普通私照
+            if(type && type=='common'){
+                if(photos[i].category == type){
+                    var t = temp.clone();
+                    if($(sel).find('.pho').length<num){
+
+                        if(photos[i].addr.indexOf('x-oss')==-1){
+                            t.find('img').attr('src',photos[i].addr+'?x-oss-process=image/resize,h_300');
+                        }else{
+                            t.find('img').attr('src',photos[i].addr);
+                        }
+
+                        if(photos[i].enable=='ing'){
+                            t.find('.shadow').show();
+                        }else if(photos[i].enable==false){
+                            t.find('.shadow').show();
+                            t.find('.shadow').text("不通过")
+                        }else{
+                            t.find('.shadow').hide();
+                        }
+
+                        t.find('img').attr('data-preview-group',group)
+                        $(sel).prepend(t);
+                    }
+                }
+            }else if(type && type!='common'){ // 特殊私照
+                if(photos[i].category == type){
+                    var t = temp.clone();
+                    if($(sel).find('.pho').length<num){
+                        if(photos[i].addr.indexOf('x-oss')==-1){
+                            t.find('img').attr('src',photos[i].addr+'?x-oss-process=image/resize,h_300');
+                        }else{
+                            t.find('img').attr('src',photos[i].addr);
+                        }
+                        if(photos[i].enable=='ing'){
+                            t.find('.shadow').show();
+                        }else if(photos[i].enable==false){
+                            t.find('.shadow').show();
+                            t.find('.shadow').text("不通过")
+                        }else{
+
+                            t.find('.shadow').hide();
+                        }
+                        t.find('img').attr('data-preview-group',group)
+                        $(sel).prepend(t);
+                    }
+                }
+            }else{ // 公开照
+                var t = temp.clone();
+                if($(sel).find('.pho').length<num){
+
+                    if(photos[i].addr.indexOf('x-oss')==-1){
+                        t.find('img').attr('src',photos[i].addr+'?x-oss-process=image/resize,h_300');
+                    }else{
+                        t.find('img').attr('src',photos[i].addr);
+                    }
+
+                    if(photos[i].enable=='ing'){
+                        t.find('.shadow').show();
+                        t.find('.setPic').hide();
+                    }else if(photos[i].enable==false){
+                        t.find('.shadow').show();
+                        t.find('.shadow').text("不通过")
+                        t.find('.setPic').hide();
+                    }else{
+                        t.find('.shadow').hide();
+                        t.find('.setPic').show();
+                    }
+
+                    t.find('img').attr('data-preview-group',group)
+                    $(sel).prepend(t);
+                }
+            }
+        }
+        // 如果没有num张图片，就显示上传图片按钮
+        if($(sel).find('.pho').length<num){
+            if(type && type!='common'){//特殊私照，布局特殊处理
+                var upBtn = '<div class="pho"><span class="updatePho2"></span></div>';
+                $(sel).append(upBtn);
+            }else{
+                var upBtn = '<div class="mui-col-sm-4 mui-col-xs-4" id="'+btnId+'"><span class="updatePhoto"></span></div>';
+                $(sel).append(upBtn);
+            }
+        }
+    }
+    // 删除公开照片
+    $('#photoPub').on('tap','.mui-icon-close',function(){
+        var url = $(this).siblings('img').attr('src').split('?')[0];
+        getInterface().post_action('delePub',JSON.stringify({photoName:url}),'post');
+        $(this).parent('.pho').remove();
+        if($('#updatePhoto').length == 0){
+            $('#photoPub').append('<div class="mui-col-sm-4 mui-col-xs-4" id="updatePhoto"><span class="updatePhoto"></span></div>');
+            // 调用ios原生方法，上传公照
+            $('#updatePhoto').on('tap',function(){
+                getInterface().post_photo('man-public/','public','');
+            });
+        }
+    })
+    // 删除普通私照
+    $('#photoPri').on('tap','.mui-icon-close',function(){
+        var url = $(this).siblings('img').attr('src').split('?')[0];
+        getInterface().post_action('delePri',JSON.stringify({photoName:url,photoType:'common'}),'post');
+        $(this).parent('.pho').remove();
+        if($('#updatePhotoPri').length == 0){
+            $('#photoPri').append('<div class="mui-col-sm-4 mui-col-xs-4" id="updatePhotoPri"><span class="updatePhoto"></span></div>');
+            // 调用ios原生方法，上传私照
+            $('#updatePhotoPri').on('tap',function(){
+                getInterface().post_photo('man-private/','private','common');
+            });
+        }
+    })
+    // 删除特殊私照
+    delPic('#lifePho','life');
+    delPic('#tourPho','tour');
+    delPic('#carPho','car');
+    delPic('#housePho','house');
+    delPic('#expPho','goods');
+    delPic('#sportPho','sport');
+    delPic('#workPho','work');
+    delPic('#swimwearPho','swimwear');
+    delPic('#looksPho','looks');
+
+    function delPic(sel, type ){
+        $(sel).on('tap','.mui-icon-close',function(){
+            var url = $(this).siblings('img').attr('src').split('?')[0];
+            getInterface().post_action('delePri',JSON.stringify({photoName:url,photoType:type}),'post');
+            $(this).parent('.pho').remove();
+            if($(sel).find('.updatePho2').length == 0){
+                $(sel).append('<div class="pho"><span class="updatePho2"></span></div>');
+            }
+        })
+    }
+
+    if(userSex==1){
+        // 调用ios原生方法，上传公照
+        $('#photoPub').on('tap','.updatePhoto',function(){
+            getInterface().post_photo('man-public/','public','');
+        });
+        // 上传私照
+        $('#photoPri').on('tap','.updatePhoto',function(){
+            getInterface().post_photo('man-private/','private','common');
+        });
+        // 上传生活照
+        $('#lifePho').on('tap','.updatePho2',function(){
+            getInterface().post_photo('man-private/','private','life');
+        });
+        // 上传旅游照
+        $('#tourPho').on('tap','.updatePho2',function(){
+            getInterface().post_photo('man-private/','private','tour');
+        });
+        // 上传座驾照
+        $('#carPho').on('tap','.updatePho2',function(){
+            getInterface().post_photo('man-private/','private','car');
+        });
+        // 上传豪宅照
+        $('#housePho').on('tap','.updatePho2',function(){
+            getInterface().post_photo('man-private/','private','house');
+        });
+        // 上传奢物照
+        $('#expPho').on('tap','.updatePho2',function(){
+            getInterface().post_photo('man-private/','private','goods');
+        });
+    }else{
+        $('#photoPub').on('tap','.updatePhoto',function(){
+           getInterface().post_photo('woman-public/','public','');
+        });
+        // 上传私照
+        $('#photoPri').on('tap','.updatePhoto',function(){
+            getInterface().post_photo('woman-private/','private','common');
+        });
+        // 上传生活照
+        $('#lifePho').on('tap','.updatePho2',function(){
+            getInterface().post_photo('woman-private/','private','life');
+        });
+        // 上传旅游照
+        $('#tourPho').on('tap','.updatePho2',function(){
+            getInterface().post_photo('woman-private/','private','tour');
+        });
+        // 上传素颜照
+        $('#looksPho').on('tap','.updatePho2',function(){
+            getInterface().post_photo('woman-private/','private','looks');
+        });
+        // 上传工作照
+        $('#workPho').on('tap','.updatePho2',function(){
+            getInterface().post_photo('woman-private/','private','work');
+        });
+        // 上传运动照
+        $('#sportPho').on('tap','.updatePho2',function(){
+            getInterface().post_photo('woman-private/','private','sport');
+        });
+        // 上传泳衣照
+        $('#swimwearPho').on('tap','.updatePho2',function(){
+            getInterface().post_photo('woman-private/','private','swimwear');
+        });
+    }
+
+    // 设置头像
+    $('#photoPub').on('tap', '.setPic', function() {
+        var setURL = $(this).siblings('img').attr('src').split('?')[0];
+        getInterface().post_action('setAvatar',JSON.stringify({addr:setURL}),'post');
+        getInterface().notice_headImage(setURL);
+    });
+
+
+
+
+
+
+</script>
+</html>

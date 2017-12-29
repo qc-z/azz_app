@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>修改密码</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <link href="css/mui.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="js/zepto.min.js"></script>
+    <script src="js/bbmis.js"></script>
+    <script type="application/javascript"  src="js/hkJS.js"></script>
+</head>
+
+<body>
+<div class="code-content">
+    <div class="mui-card">
+        <div class="mui-input-group" id="input_example">
+            <div class="mui-input-row">
+                <label>旧密码</label>
+                <input id="oldPassword" type="password" class="mui-input-password" placeholder="请输入旧密码">
+            </div>
+            <div class="mui-input-row">
+                <label>新密码</label>
+                <input id="newPass" type="password" class="mui-input-password" placeholder="请输入新密码">
+            </div>
+            <div class="mui-input-row">
+                <label>确认密码</label>
+                <input id="conformPassword" type="password" class="mui-input-password" placeholder="请再次输入密码">
+            </div>
+            <div class="comfirmBtn">
+                <button class="btn btn-primary" id="confirmBtn">确定</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script src="js/mui.min.js"></script>
+<script>
+    getInterface().initDataWithArray("#FFFFFF","back","修改密码","","","#333333","","");
+    function leftBtnClick(){
+        getInterface().leftBtnClick();
+    }
+
+    //校验验证码
+    function validate(){
+        var newPass = $("#newPass").val();
+        var oldPassword = $("#oldPassword").val();
+        var conformPassword = $("#conformPassword").val();
+
+        if(newPass.length>0 && oldPassword.length>0) { //若输入的验证码长度为0
+            getInterface().post_action("changePwd",JSON.stringify({newPassword:newPass,oldPassword:oldPassword,conformPassword:conformPassword}),"post");
+        }else{
+            mui.alert("请输入正确的内容！"); //则弹出请输入验证码
+        }
+    }
+
+
+    $('#confirmBtn').on('tap', function() {
+        validate();
+    });
+
+
+    function return_action(data,data2){
+        if( data2=='changePwd' ){
+            if(data.ret==1){
+                mui.toast("修改密码成功！");
+                setTimeout(function(){
+                    getInterface().leftBtnClick();
+                },1500)
+            }else{
+                mui.alert(data.err);
+            }
+        }
+    }
+
+</script>
+</body>
+</html>

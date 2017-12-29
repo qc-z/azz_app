@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link href="css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="css/style.css" />
+	<link rel="stylesheet" href="css/icons-extra.css">
+    <title>面向高端人群的甜蜜社交应用</title>
+    <script src="js/zepto.min.js"></script>
+    <script src="js/bbmis.js"></script>
+    <script type="application/javascript"  src="js/hkJS.js"></script>
+</head>
+<body class="whiteBg vipPayBg">
+	<section class="pay">
+		<div class="radioBox">
+			<div class="mui-input-row mui-radio">
+				<label class="checkedRed" for="price1">7天</label>
+				<input name="price" type="radio" value="198" class="price" checked><span class="checkedRed" data-meal='meal_a'>￥198</span>
+			</div>
+			<div class="mui-input-row mui-radio">
+				<label for="price2">14天</label>
+				<input name="price" type="radio" value="368" class="price"><span data-meal='meal_b'>￥368</span>
+			</div>
+			<div class="mui-input-row mui-radio">
+				<label for="price3">28天</label>
+				<input name="price" type="radio" value="638" class="price"><span data-meal='meal_c'>￥638</span>
+			</div>
+		</div>
+
+		<div class="payType">
+			<p>选择支付方式</p>
+			<div class="payTypeDiv">
+				<a class="type1" id="zhi"><i></i><span>支付宝</span></a>
+				<!-- <a class="type2" id="wei"><i></i><span>微信</span></a> -->
+			</div>
+		</div>
+		<div class="special">
+			<p>高级VIP更快找到另一半</p>
+			<div class="spe-item">
+				<span class="tiltle">收信倍数</span>
+				<div class="range">
+					<div class="range1">高级VIP&nbsp;&nbsp;提升300%</div>
+					<div class="range2">普通会员</div>
+				</div>
+			</div>
+		</div>
+		<div class="privilege">
+			<p>VIP专属特权</p>
+			<div class="RightList RightListTop">
+				<div class="right-item">
+					<img src="img/ico-LiveChat@2x.png" alt="">
+					<p>直接可发信息</p>
+				</div>
+				<div class="right-item">
+					<img src="img/identify1.png" alt="">
+					<p>识别优质对象</p>
+				</div>
+				<div class="right-item noBor">
+					<img src="img/ico_exhibition@2x.png" alt="">
+					<p>8倍展示机会</p>
+				</div>
+			</div>
+			<div class="RightList">
+				<div class="right-item">
+					<img src="img/ico_UsrPrivacy@2x.png" alt="">
+					<p>更高隐私权限</p>
+				</div>
+				<div class="right-item">
+					<img src="img/ico_love@2x.png" alt="">
+					<p>有喜爱我的Ta</p>
+				</div>
+				<div class="right-item noBor">
+					<img src="img/crown1.png" alt="">
+					<p>尊贵身份标识</p>
+				</div>
+			</div>
+		</div>
+
+	</section>
+<script src="js/mui.min.js"></script>
+<script>
+mui.init();
+$(function(){
+	getInterface().initDataWithArray("#FFFFFF","back","升级VIP","","","#333333","","");
+})
+function leftBtnClick(){
+	getInterface().leftBtnClick();
+}
+//支付套餐
+var mealSta = 'meal_a';
+//选中字体变红
+$('.radioBox').on('tap','.mui-radio',function(e){
+	$('.radioBox label').removeClass('checkedRed');
+	$('.radioBox input').removeAttr('checked');
+	$('.radioBox span').removeClass('checkedRed');
+
+	// console.log($(this));
+	$(this).children('label').addClass('checkedRed');
+	$(this).children('input').attr('checked','checked');
+	$(this).children('span').addClass('checkedRed');
+	// console.log(e.target);
+	mealSta = $(this).children('span').attr('data-meal');
+});
+
+//支付宝
+$('#zhi').on('tap',function(e){
+	e.preventDefault();
+	var pri = getVals('price');
+	console.log(pri)
+	if(pri){
+		getInterface().pay_alert(pri,1,mealSta);
+		function return_paySure(data){
+			alert(data);
+		}
+	}
+
+})
+//微信
+$('#wei').on('tap',function(e){
+	e.preventDefault();
+	var pri = getVals('price');
+	console.log(pri)
+	if(pri){
+		getInterface().pay_alert(pri,2,mealSta);
+		function return_paySure(data){
+			alert(data);
+		}
+	}
+
+})
+
+
+function getVals(classN){
+    var res = getRadioRes(classN);
+    if(res == null){mui.toast('请选择'); return;}
+    return res;
+}
+function getRadioRes(className){
+    var rdsObj = document.getElementsByClassName(className);
+    var checkVal = null;
+    for(i = 0; i < rdsObj.length; i++){
+        if(rdsObj[i].checked){checkVal = rdsObj[i].value;}
+    }
+    return checkVal;
+}
+
+
+</script>
+</body>
+</html>

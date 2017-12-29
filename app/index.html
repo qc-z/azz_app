@@ -1,0 +1,731 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>宠爱</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<meta name="format-detection" content="telephone=no" />
+	<link href="css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" type="text/css" href="css/icons-extra.css" />
+	<link rel="stylesheet" href="css/style.css" />
+	<script src="js/zepto.min.js"></script>
+	<script src="js/bbmis.js"></script>
+	<script type="application/javascript"  src="js/hkJS.js"></script>
+</head>
+
+<body class="whiteBg">
+	<!--页面主内容区开始-->
+	<div class="mui-page-content index-con shouye">
+		<div id="slider" class="mui-slider mui-fullscreen">
+			<div id="sliderSegmentedControl" class="top-title mui-segmented-control mui-segmented-control-inverted">
+				<div class="integrity" id="fillInfo">
+					<span class="">信息完整度</span>
+					<progress max="100" value="0" id="ratePro"></progress>
+					<span id="rate">0%</span>
+					<p id="trip"></p>
+				</div>
+				<div class="tabTitle">
+					<div class="mui-segmented-control">
+						<a class="mui-control-item mui-active" id="distance" href="#item1mobile">靠近我11</a>
+						<a class="mui-control-item" id="loginTime" href="#item2mobile">最近活跃</a>
+						<a class="mui-control-item" id="creatTime" href="#item3mobile">新加入</a>
+					</div>
+				</div>
+			</div>
+
+			<div class="mui-slider-group" style="top:100px;">
+				<div id="item1mobile" class="mui-slider-item mui-control-content mui-active">
+					<div class="mui-scroll-wrapper" id="scroll1">
+						<div class="mui-scroll">
+							<ul class="mui-table-view" id="content1">
+
+							</ul>
+				  			<!-- <div class="nobdyTips">
+				  				<img src="./img/nosearch.png" alt="">
+				  				<p class="noresult">没有搜索结果</p>
+			  					<p class="changeTerm">换个条件试试</p>
+			  					<button id='search_btn'>看看附近有谁</button>
+			  				</div> -->
+			  			</div>
+			  		</div>
+			  	</div>
+			  	<div id="item2mobile" class="mui-slider-item mui-control-content">
+			  		<div class="mui-scroll-wrapper" id="scroll2">
+			  			<div class="mui-scroll">
+			  				<ul class="mui-table-view" id="content2"></ul>
+			  			</div>
+			  		</div>
+			  	</div>
+			  	<div id="item3mobile" class="mui-slider-item mui-control-content">
+			  		<div class="mui-scroll-wrapper" id="scroll3">
+			  			<div class="mui-scroll">
+			  				<ul class="mui-table-view" id="content3"></ul>
+			  			</div>
+			  		</div>
+			  	</div>
+			  </div>
+			</div>
+
+		</div>
+		<!--页面主内容区结束-->
+	</body>
+	<script type="text/template" id="li_list">
+		<li class="mui-table-view-cell mui-media collect-item">
+			<a href="###">
+				<img class="photo mui-media-object mui-pull-left" src="" data-id="1">
+				<div class="mui-media-body">
+					<span id="nickname"></span>
+					<img class="vip-logo" src="./img/white.jpg" style="vertical-align: top;display: none; width: 18px;height: 18px;" alt="">
+					<span class="flag-vip"></span>
+					<p class="basicInfo">
+						<span class="addr"></span><span class="age"></span><span class="lovePrice"></span>
+					</p>
+					<p id="character" class='mui-ellipsis'></p>
+				</div>
+			</a>
+		</li>
+	</script>
+	<script src="js/mui.min.js"></script>
+	<script type="text/javascript">
+		mui.init();
+		mui('.mui-slider').slider().setStopped(true);
+		$("#content1").empty();
+	// 调用ios原生方法，初始化顶部栏
+	getInterface().initDataWithArray("#ffffff","","宠爱蜜语","","","FFFFFF","","");
+
+
+	
+	
+	// 新的屏蔽方法
+	var shield1 = 'no';
+	localStorage.setItem('shield1',shield1)
+	var u = navigator.userAgent;
+	var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1;
+	var isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+	if(isiOS){
+		getInterface().action_info()
+		function return_info(data,data2){
+			localStorage.setItem('shield1',data)
+			if(data=='yes'){
+				shield1 = 'yes';
+			}else{
+				shield1 = 'no';
+			}
+		}
+	}
+    //获取app版本
+    getInterface().getAPPInfo();
+
+    var edition;
+    function return_APPInfo(data){
+    	edition = data;
+    	localStorage.setItem('edition',edition);
+    }
+
+    var searchSta = localStorage.getItem('searchSta');
+    localStorage.setItem('searchSta','0');
+	//储存点击搜索之前的tab(默认是第一个)
+	localStorage.setItem('tabthis','byDistance');
+	// 从本地拿数据
+	var tabthis = localStorage.getItem('tabthis');
+	//取是否从高级搜索进来的flag
+	var searchFlag = localStorage.getItem('searchFlag');
+	//是否开启了定位
+	var locationSta = localStorage.getItem('locationSta');
+	//获取搜索条件
+	var searchItems = JSON.parse(localStorage.getItem('searchItems'));  // 从本地拿数据
+	//var searchItems = localStorage.getItem('searchItems');  // 从本地拿数据
+	// alert(searchItems)
+	// alert(searchFlag)
+	// alert(tabthis+searchFlag+searchItems.browsed)
+	//获取搜索结果
+	// var searchResults = JSON.parse(localStorage.getItem('searchResults'));  // 从本地拿数据
+	//获取经纬度
+	if(locationSta == 'yes'){
+		//取经纬度
+		var latitude = localStorage.getItem('latitude');
+		var longitude = localStorage.getItem('longitude');
+	}
+	//禁用滚动条
+	mui('.mui-scroll-wrapper').scroll({
+		indicators:false
+	});
+
+	//循环初始化上拉加载
+	mui.each(mui('.mui-scroll-wrapper'), function(index,ele){
+		mui(ele).pullRefresh({
+			up: {
+				height:100,//可选.默认50.触发上拉加载拖动距离
+		    	auto:false,//可选,默认false.自动上拉加载一次
+		    	contentrefresh : "正在加载...",//可选，正在加载状态时，上拉加载控件上显示的标题内容
+		    	contentnomore:'没有更多数据了',
+		    	callback: pullupRefresh
+		    }
+		});
+	});
+
+	//页码
+	var pageNumber1 = "1", pageNumber2 = "1", pageNumber3 = "1";
+	//判断是否完成所有数据加载
+	var overFlag1 = false, overFlag2 = false, overFlag3 = false;
+	//完成一次加载才能翻下一次，防止出现两个滚动条
+	// var onceOverFlag1 = false, onceOverFlag2 = false, onceOverFlag3 = false;
+	//加载的容器标识符
+	var contentFlag = 1;
+	// 上拉刷新回调函数
+	function pullupRefresh() {
+		var self = this;//this == mui('#refreshContainer').pullRefresh()
+		setTimeout(function() {
+			switch(self.element.id){
+				case 'scroll1':
+					// if(searchSta == "1"){
+					// 	self.refresh(true);
+					// }
+					contentFlag = 1;
+					//完成一次加载才能翻下一次，防止出现两个滚动条
+					// if(onceOverFlag1 = true){
+						pageNumber1 ++;
+						// 调用ios原生方法，请求用户列表(首次进来，不经高级搜索)
+						if(searchFlag == '0' || searchFlag == null){
+							getInterface().post_action("getAppLists",JSON.stringify({pageNumber: pageNumber1,search: "byDistance"}),"get");
+						}else{
+							// alert(pageNumber1)
+							// 调用ios原生方法，请求用户列表（高级搜索之后）
+							getInterface().post_action("searchLists",JSON.stringify({lat: (locationSta=='yes')?latitude:'',lng: (locationSta=='yes')?longitude:'',pageNumber: pageNumber1,search: "byDistance",distance: searchItems.distance,browsed: searchItems.browsed,photo: searchItems.photo,vip: searchItems.vip,browse: searchItems.browse,browsedto: searchItems.browsedto,care: searchItems.care,cared: searchItems.cared,city: searchItems.city}),"post");
+						}
+					// }
+					// onceOverFlag1 = false;
+					if(overFlag1){
+						self.endPullupToRefresh(true);//参数为true代表没有更多数据了。
+					}else{
+						self.endPullupToRefresh(false);
+					}
+
+					break;
+					case 'scroll2':
+					// if(searchSta == "1"){
+					// 	self.refresh(true);
+					// }
+					contentFlag = 2;
+					//完成一次加载才能翻下一次，防止出现两个滚动条
+					// if(onceOverFlag2 = true){
+						pageNumber2 ++;
+						// 调用ios原生方法，请求用户列表(首次进来，不经高级搜索)
+						if(searchFlag == '0' || searchFlag == null){
+							getInterface().post_action("getAppLists",JSON.stringify({pageNumber: pageNumber2,search: "byLoginTime"}),"get");
+						}else{
+							// alert(pageNumber2)
+
+							// 调用ios原生方法，请求用户列表（高级搜索之后）
+							getInterface().post_action("searchLists",JSON.stringify({lat: (locationSta=='yes')?latitude:'',lng: (locationSta=='yes')?longitude:'',pageNumber: pageNumber2,search: "byLoginTime",distance: searchItems.distance,browsed: searchItems.browsed,photo: searchItems.photo,vip: searchItems.vip,browse: searchItems.browse,browsedto: searchItems.browsedto,care: searchItems.care,cared: searchItems.cared,city: searchItems.city}),"post");
+						}
+					// }
+					// onceOverFlag2 = false;
+
+					if(overFlag2){
+						self.endPullupToRefresh(true);//参数为true代表没有更多数据了。
+					}else{
+						self.endPullupToRefresh(false);
+					}
+					break;
+					case 'scroll3':
+					// if(searchSta == "1"){
+					// 	self.refresh(true);
+					// }
+					contentFlag = 3;
+					//完成一次加载才能翻下一次，防止出现两个滚动条
+					// if(onceOverFlag3 = true){
+						pageNumber3 ++;
+						// 调用ios原生方法，请求用户列表(首次进来，不经高级搜索)
+						if(searchFlag == '0' || searchFlag == null){
+							getInterface().post_action("getAppLists",JSON.stringify({pageNumber: pageNumber3,search: "byCreatTime"}),"get");
+						}else{
+							// alert(pageNumber3)
+
+							// 调用ios原生方法，请求用户列表（高级搜索之后）
+							getInterface().post_action("searchLists",JSON.stringify({lat: (locationSta=='yes')?latitude:'',lng: (locationSta=='yes')?longitude:'',pageNumber: pageNumber3,search: "byCreatTime",distance: searchItems.distance,browsed: searchItems.browsed,photo: searchItems.photo,vip: searchItems.vip,browse: searchItems.browse,browsedto: searchItems.browsedto,care: searchItems.care,cared: searchItems.cared,city: searchItems.city}),"post");
+						}
+					// }
+					// onceOverFlag3 = false;
+
+					if(overFlag3){
+						self.endPullupToRefresh(true);//参数为true代表没有更多数据了。
+					}else{
+						self.endPullupToRefresh(false);
+					}
+					break;
+				}
+
+
+			}, 500);
+
+	}
+
+	// 调用ios原生方法，请求用户列表(首次进来，不经高级搜索)
+	if(searchFlag == '0' || searchFlag == null){
+		getInterface().post_action("getAppLists",JSON.stringify({pageNumber: "1",search: "byDistance"}),"get");
+	}else{
+		// 调用ios原生方法，请求用户列表（高级搜索之后）
+		getInterface().post_action("searchLists",JSON.stringify({lat: (locationSta=='yes')?latitude:'',lng: (locationSta=='yes')?longitude:'',pageNumber: "1",search: tabthis,distance: searchItems.distance,browsed: searchItems.browsed,photo: searchItems.photo,vip: searchItems.vip,browse: searchItems.browse,browsedto: searchItems.browsedto,care: searchItems.care,cared: searchItems.cared,city: searchItems.city}),"post");
+	}
+
+	// 调用ios原生方法，判读用户信息完整度
+	getInterface().post_action("getInfo","","get");
+
+	// 调用ios原生方法，返回用户列表
+	function return_action(data,data2){
+		if( data2=='getInfo' ){
+			//储存开关
+
+			localStorage.setItem('switchFlag',data.shield);
+			localStorage.setItem('switchFlag1',shield1);
+			// alert(localStorage.getItem('switchFlag1'))
+			localStorage.setItem('myInfo',JSON.stringify(data));
+			//顶部提示栏
+			var textArr = ["您的资料审核不通过，请重新提交您资料或者照片","您的资料正在审核中，我们将会优先审核您的资料","继续完善资料，方可与会员开聊","请上传照片，以便正常交友","您的资料正在审核中..."]
+
+			if(data.result.vip.role && data.result.auditStatus == "failed" || !data.result.vip.role && data.result.auditStatus == "failed"){
+				$('.integrity').show();
+				$("#trip").html(textArr[0])
+			}else if(data.result.vip.role && data.result.auditStatus == "ing"){
+				$('.integrity').css('display','block');
+
+				$("#trip").html(textArr[1])
+			}
+
+			if(!data.result.vip.role && data.result.completion < 89 || data.result.vip.role && data.result.completion < 89){
+				$('.integrity').show();
+				$("#trip").html(textArr[2])
+			}else if(!data.result.vip.role && data.result.completion >= 89 && data.result.photoPub.length == 0){
+				$('.integrity').show();
+				flag = 1
+				$("#trip").html(textArr[3]+'<a>现在升级</a>')
+			}else if(!data.result.vip.role && data.result.completion >= 89 && data.result.photoPub.length>0 && data.result.auditStatus == "ing"){
+				$('.integrity').show();
+				flag = 1
+				$("#trip").html(textArr[4]+'<a>现在升级</a>')
+			}
+			// mui-alert('会员'+data.result.vip.role+'完整度'+data.result.completion+'状态'+data.result.auditStatus)
+			if(data.result.completion >89 && data.result.auditStatus == "success"){
+				$('.integrity').css('display','none');
+				$('.mui-slider-group').css('top','38px!important');
+			}
+			$('#ratePro').attr('value',data.result.completion);
+			$('#rate').text(data.result.completion+'%');
+			//设置隐藏
+			shield = data.shield
+			myId = data.result._id;
+
+			localStorage.setItem('completion',data.result.completion);
+		}else if(data2=='getAppLists'){
+			var results = data.results;
+			// if(results.length == 0){
+			// 	$(".nobdyTips").css('display','block');
+			// }else{
+			// 	$(".nobdyTips").css('display','none');
+			// }
+
+			//获取数据的条数
+			if(contentFlag == 1 && results.length < 10){
+				overFlag1 = true;
+			}else if(contentFlag == 2 && results.length < 10){
+				overFlag2 = true;
+			}else if(contentFlag == 3 && results.length < 10){
+				overFlag3 = true;
+			}
+			for( var i in results ){
+				var t = $($("#li_list").html());
+				if(results[i].avatar){
+					//头像
+					t.find('.photo').attr('src',results[i].avatar);
+				}else if(results[i].sex==1){
+					t.find('.photo').attr('src','img/nan01.png');
+				}else{
+					t.find('.photo').attr('src','img/nv01.png');
+				}
+				t.find('.photo').attr('data-id',results[i]._id);
+				if(results[i].addr){
+					t.find('.addr').html(results[i].addr+'/');
+				}
+				if(results[i].age){
+					t.find('.age').html(results[i].age+'岁/');
+				}
+				if(results[i].lovePrice){
+					t.find('.lovePrice').html(results[i].lovePrice);
+				}
+				if(results[i].nickname){
+					t.find('#nickname').html(results[i].nickname);
+				}else{
+					t.find('#nickname').html(results[i]._id);
+				}
+				t.find('#character').html(results[i].character);
+				if(contentFlag == 1){
+					$("#content1").append(t);
+				}else if(contentFlag == 2){
+					$("#content2").append(t);
+				}else if(contentFlag == 3){
+					$("#content3").append(t);
+				}
+				if(shield1 =='no'){
+					// 1.0.2之前版本
+					if(shield =='no'){
+						if(results[i].vip.role){
+							t.find('.flag-vip').html('高级');
+							t.find('.flag-vip').show();
+						}else{
+							t.find('.flag-vip').hide();
+							t.find('.flag-vip').html('');
+						}
+					}else{
+						$('.vip-logo').hide();
+						$('.flag-vip').hide();
+						$('.vip-logo').hide();
+						$('#fillInfo').hide();
+						$('.mui-slider-group').css('top','38px!important');
+					}
+
+					//1.0.2版本
+					if(edition = "1.0.2"){
+						$('.flag-vip').hide();
+						$('.vip-logo').show();
+						if(results[i].vipLevel == "vip0"){
+							t.find('.vip-logo').hide();
+						}else if(results[i].vipLevel == "vip1"){
+							t.find('.vip-logo').attr("src","./img/pi_HonourableMember.png");
+						}else if(results[i].vipLevel == "vip2"){
+							t.find('.vip-logo').attr("src","./img/pic_GoldMember.png");
+						}else if(results[i].vipLevel == "vip3"){
+							t.find('.vip-logo').attr("src","./img/pic_DiamondMember.png");
+						}else if(results[i].vipLevel == "vip4"){
+							t.find('.vip-logo').attr("src","./img/pic_CrownMember.png");
+						}
+					}
+				}else{
+					$('.vip-logo').hide();
+					$('.flag-vip').hide();
+					$('#fillInfo').hide();
+					$('.mui-slider-group').css('top','38px!important');
+				}
+			}
+			//完成一次加载才能翻下一次，防止出现两个滚动条
+			// if(contentFlag == 1){
+			// 	onceOverFlag1 = true;
+			// }else if(contentFlag == 2){
+			// 	onceOverFlag2 = true;
+			// }else if(contentFlag == 3){
+			// 	onceOverFlag3 = true;
+			// }
+		}else{
+			var results = data.results;
+			//获取数据的条数
+			if(contentFlag == 1 && results.length < 10){
+				overFlag1 = true;
+			}else if(contentFlag == 2 && results.length < 10){
+				overFlag2 = true;
+			}else if(contentFlag == 3 && results.length < 10){
+				overFlag3 = true;
+			}
+			for( var i in results ){
+				var t = $($("#li_list").html());
+				if(results[i].avatar){
+					//头像
+					t.find('.photo').attr('src',results[i].avatar);
+				}else if(results[i].sex==1){
+					t.find('.photo').attr('src','img/nan01.png');
+				}else{
+					t.find('.photo').attr('src','img/nv01.png');
+				}
+				t.find('.photo').attr('data-id',results[i]._id);
+				if(results[i].addr){
+					t.find('.addr').html(results[i].addr+'/');
+				}
+				if(results[i].age){
+					t.find('.age').html(results[i].age+'岁/');
+				}
+				if(results[i].lovePrice){
+					t.find('.lovePrice').html(results[i].lovePrice);
+				}
+				if(results[i].nickname){
+					t.find('#nickname').html(results[i].nickname);
+				}else{
+					t.find('#nickname').html(results[i]._id);
+				}
+				t.find('#character').html(results[i].character);
+				if(contentFlag == 1){
+					$("#content1").append(t);
+				}else if(contentFlag == 2){
+					$("#content2").append(t);
+				}else if(contentFlag == 3){
+					$("#content3").append(t);
+				}
+
+				if(shield =='no'){
+					//1.1.0之前版本
+					if(results[i].vip.role){
+						t.find('.flag-vip').html('高级');
+						t.find('.flag-vip').show();
+					}else{
+						t.find('.flag-vip').hide();
+						t.find('.flag-vip').html('');
+					}
+
+					//1.1.2版本
+					if(edition = "1.0.2"){
+						$('.flag-vip').hide();
+						$('.vip-logo').show();
+						if(results[i].vipLevel == "vip0"){
+							t.find('.vip-logo').hide();
+						}else if(results[i].vipLevel == "vip1"){
+							t.find('.vip-logo').attr("src","./img/pi_HonourableMember.png");
+						}else if(results[i].vipLevel == "vip2"){
+							t.find('.vip-logo').attr("src","./img/pic_GoldMember.png");
+						}else if(results[i].vipLevel == "vip3"){
+							t.find('.vip-logo').attr("src","./img/pic_DiamondMember.png");
+						}else if(results[i].vipLevel == "vip4"){
+							t.find('.vip-logo').attr("src","./img/pic_CrownMember.png");
+						}
+					}
+				}else{
+					$('.vip-logo').hide();
+					$('.flag-vip').hide();
+					$('#fillInfo').hide();
+					$('.mui-slider-group').css('top','38px!important');
+				}
+				if(shield1 =='no'){
+					//1.1.0之前版本
+					if(results[i].vip.role){
+						t.find('.flag-vip').html('高级');
+						t.find('.flag-vip').show();
+					}else{
+						t.find('.flag-vip').hide();
+						t.find('.flag-vip').html('');
+					}
+
+					//1.1.2版本
+					if(edition = "1.0.2"){
+						$('.flag-vip').hide();
+						$('.vip-logo').show();
+						if(results[i].vipLevel == "vip0"){
+							t.find('.vip-logo').hide();
+						}else if(results[i].vipLevel == "vip1"){
+							t.find('.vip-logo').attr("src","./img/pi_HonourableMember.png");
+						}else if(results[i].vipLevel == "vip2"){
+							t.find('.vip-logo').attr("src","./img/pic_GoldMember.png");
+						}else if(results[i].vipLevel == "vip3"){
+							t.find('.vip-logo').attr("src","./img/pic_DiamondMember.png");
+						}else if(results[i].vipLevel == "vip4"){
+							t.find('.vip-logo').attr("src","./img/pic_CrownMember.png");
+						}
+					}
+				}else{
+					$('.vip-logo').hide();
+					$('.flag-vip').hide();
+					$('#fillInfo').hide();
+					$('.mui-slider-group').css('top','38px!important');
+				}
+			}
+			//完成一次加载才能翻下一次，防止出现两个滚动条
+			// if(contentFlag == 1){
+			// 	onceOverFlag1 = true;
+			// }else if(contentFlag == 2){
+			// 	onceOverFlag2 = true;
+			// }else if(contentFlag == 3){
+			// 	onceOverFlag3 = true;
+			// }
+
+			// if(results.length == 0){
+			// 	$(".nobdyTips").css('display','block');
+			// }else{
+			// 	$(".nobdyTips").css('display','none');
+			// }
+		}
+
+	}
+
+
+	function reload_index(){
+		//是否开启了定位
+		var locationSta = localStorage.getItem('locationSta');
+		//获取经纬度
+		if(locationSta == 'yes'){
+			//取经纬度
+			var latitude = localStorage.getItem('latitude');
+			var longitude = localStorage.getItem('longitude');
+		}
+		var completion = localStorage.getItem('completion');
+		var auditStatus = localStorage.getItem('auditStatus');
+		var data = localStorage.getItem('myInfo');
+		var infoSta = localStorage.getItem('infoSta');
+		// 存储跳首页变量（避免每次tab点击首页都刷新）
+		var searchSta = localStorage.getItem('searchSta');
+		var perstate = localStorage.getItem('perstate');
+		var chatstate = localStorage.getItem('chatstate');
+		var blackstate = localStorage.getItem('balckTag');
+		var photoSta = localStorage.getItem('photoSta');
+
+		// 存储跳首页变量（避免每次tab点击首页都刷新）
+		localStorage.setItem('searchSta','0');
+		localStorage.setItem('perstate','0');
+		localStorage.setItem('chatstate','0');
+		localStorage.setItem('balckTag',0)
+		localStorage.setItem('infoSta',0)
+		localStorage.setItem('photoSta',0)
+		//获取搜索条件
+		searchItems = JSON.parse(localStorage.getItem('searchItems'));  // 从本地拿数据
+		// 从本地拿数据
+		var tabthis = localStorage.getItem('tabthis');
+		if(searchSta == "1"){
+			// 调用ios原生方法，请求用户列表（高级搜索之后）
+			getInterface().post_action("searchLists",JSON.stringify({lat: (locationSta=='yes')?latitude:'',lng: (locationSta=='yes')?longitude:'',pageNumber: "1",search: tabthis,distance: searchItems.distance,browsed: searchItems.browsed,photo: searchItems.photo,vip: searchItems.vip,browse: searchItems.browse,browsedto: searchItems.browsedto,care: searchItems.care,cared: searchItems.cared,city: searchItems.city}),"post");
+
+			if(contentFlag == 1){
+				$("#content1").empty();
+				mui('#scroll1').pullRefresh().refresh(true);
+				overFlag1 = false;
+				pageNumber1 = "1";
+			}else if(contentFlag == 2){
+				$("#content2").empty();
+				mui('#scroll2').pullRefresh().refresh(true);
+				overFlag2 = false;
+				pageNumber2 = "1";
+			}else if(contentFlag == 3){
+				$("#content3").empty();
+				mui('#scroll3').pullRefresh().refresh(true);
+				overFlag3 = false;
+				pageNumber3 = "1";
+			}
+		}
+		//修改完资料刷新一次
+		if(infoSta == 1 || photoSta == 1){
+			getInterface().post_action("getInfo","","get");
+		}
+		
+
+		if(perstate == 1 || chatstate == 1 || blackstate ==1 ){
+			if(contentFlag == 1){
+				$("#content1").empty();
+				mui('#scroll1').pullRefresh().refresh(true);
+				overFlag1 = false;
+				pageNumber1 = "1";
+			}else if(contentFlag == 2){
+				$("#content2").empty();
+				mui('#scroll2').pullRefresh().refresh(true);
+				overFlag2 = false;
+				pageNumber2 = "1";
+			}else if(contentFlag == 3){
+				$("#content3").empty();
+				mui('#scroll3').pullRefresh().refresh(true);
+				overFlag3 = false;
+				pageNumber3 = "1";
+			}
+			// 调用ios原生方法，请求用户列表(首次进来，不经高级搜索)
+			if(searchFlag == '0' || searchFlag == null){
+				getInterface().post_action("getAppLists",JSON.stringify({pageNumber: "1",search: tabthis}),"get");
+			}else{
+				// 调用ios原生方法，请求用户列表（高级搜索之后）
+				getInterface().post_action("searchLists",JSON.stringify({lat: (locationSta=='yes')?latitude:'',lng: (locationSta=='yes')?longitude:'',pageNumber: "1",search: tabthis,distance: searchItems.distance,browsed: searchItems.browsed,photo: searchItems.photo,vip: searchItems.vip,browse: searchItems.browse,browsedto: searchItems.browsedto,care: searchItems.care,cared: searchItems.cared,city: searchItems.city}),"post");
+			}
+		}
+
+		//修改资料后，更新完整度
+		$('#ratePro').attr('value',completion);
+		$('#rate').text(completion+'%');
+
+	}
+
+
+
+	function rightBtnClick(data){
+
+		getInterface().html_jump_href(service+'/app/search.html', 'no');
+	}
+
+
+	document.querySelectorAll('.mui-control-item')[0].addEventListener('tap',function(){
+		contentFlag = 1;
+		//储存点击搜索之前的tab
+		localStorage.setItem('tabthis','byDistance');
+		if(pageNumber1 == "1"){
+			$('#content1').empty();
+			//获取搜索条件
+			searchItems = JSON.parse(localStorage.getItem('searchItems'));
+			//取是否从高级搜索进来的flag
+			var searchFlag = localStorage.getItem('searchFlag');
+			// 调用ios原生方法，请求用户列表(首次进来，不经高级搜索)
+			if(searchFlag == '0' || searchFlag == null){
+				getInterface().post_action("getAppLists",JSON.stringify({pageNumber: pageNumber1,search: "byDistance"}),"get");
+			}else{
+				// 调用ios原生方法，请求用户列表（高级搜索之后）
+				getInterface().post_action("searchLists",JSON.stringify({lat: (locationSta=='yes')?latitude:'',lng: (locationSta=='yes')?longitude:'',pageNumber: pageNumber1,search: "byDistance",distance: searchItems.distance,browsed: searchItems.browsed,photo: searchItems.photo,vip: searchItems.vip,browse: searchItems.browse,browsedto: searchItems.browsedto,care: searchItems.care,cared: searchItems.cared,city: searchItems.city}),"post");
+			}
+		}else{
+			// mui('#scroll1').scroll().scrollTo(0,0,100);
+			mui('#scroll1').pullRefresh().scrollTo(0,0,100);
+		}
+	})
+
+	document.querySelectorAll('.mui-control-item')[1].addEventListener('tap',function(){
+		contentFlag = 2;
+		//储存点击搜索之前的tab
+		localStorage.setItem('tabthis','byLoginTime');
+		if(pageNumber2 == "1"){
+			$('#content2').empty();
+			//获取搜索条件
+			searchItems = JSON.parse(localStorage.getItem('searchItems'));
+			//取是否从高级搜索进来的flag
+			var searchFlag = localStorage.getItem('searchFlag');
+			// 调用ios原生方法，请求用户列表(首次进来，不经高级搜索)
+			if(searchFlag == '0' || searchFlag == null){
+				getInterface().post_action("getAppLists",JSON.stringify({pageNumber: pageNumber2,search: "byLoginTime"}),"get");
+			}else{
+				// 调用ios原生方法，请求用户列表（高级搜索之后）
+				getInterface().post_action("searchLists",JSON.stringify({lat: (locationSta=='yes')?latitude:'',lng: (locationSta=='yes')?longitude:'',pageNumber: pageNumber2,search: "byLoginTime",distance: searchItems.distance,browsed: searchItems.browsed,photo: searchItems.photo,vip: searchItems.vip,browse: searchItems.browse,browsedto: searchItems.browsedto,care: searchItems.care,cared: searchItems.cared,city: searchItems.city}),"post");
+			}
+		}else{
+			// mui('#scroll2').scroll().scrollTo(0,0,100);
+			mui('#scroll2').pullRefresh().scrollTo(0,0,100);
+		}
+	})
+	document.querySelectorAll('.mui-control-item')[2].addEventListener('tap',function(){
+		contentFlag = 3;
+		//储存点击搜索之前的tab
+		localStorage.setItem('tabthis','byCreatTime');
+		if(pageNumber3 == "1"){
+			$('#content3').empty();
+			//获取搜索条件
+			searchItems = JSON.parse(localStorage.getItem('searchItems'));
+			//取是否从高级搜索进来的flag
+			var searchFlag = localStorage.getItem('searchFlag');
+			// 调用ios原生方法，请求用户列表(首次进来，不经高级搜索)
+			if(searchFlag == '0' || searchFlag == null){
+				getInterface().post_action("getAppLists",JSON.stringify({ pageNumber: pageNumber3,search: "byCreatTime"}),"get");
+			}else{
+				// 调用ios原生方法，请求用户列表（高级搜索之后）
+				getInterface().post_action("searchLists",JSON.stringify({lat: (locationSta=='yes')?latitude:'',lng: (locationSta=='yes')?longitude:'',pageNumber: pageNumber3,search: "byCreatTime",distance: searchItems.distance,browsed: searchItems.browsed,photo: searchItems.photo,vip: searchItems.vip,browse: searchItems.browse,browsedto: searchItems.browsedto,care: searchItems.care,cared: searchItems.cared,city: searchItems.city}),"post");
+			}
+		}else{
+			// mui('#scroll3').scroll().scrollTo(0,0,100);
+			mui('#scroll3').pullRefresh().scrollTo(0,0,100);
+		}
+	})
+
+
+
+	// ios原生方法，跳转到个人主页
+	$('.mui-table-view').on('tap','.collect-item',function(){
+		var userId = $(this).find(".photo").attr('data-id');
+		getInterface().html_jump_href(service+'/app/personal.html?personId='+userId+'&myId='+myId , 'yes');
+	})
+
+	$('#fillInfo').on('tap',function(){
+		if(flag == 1){
+			getInterface().html_jump_href(service+'/app/paymentVIPVIP.html?back=two', 'yes');
+		}
+	})
+	//没有搜索结果，跳高级搜索
+	$('#search_btn').on('tap',function(){
+		getInterface().html_jump_href(service+'/app/search.html', 'no');
+	})
+
+</script>
+</html>

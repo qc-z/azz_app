@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>升级会员</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="css/style.css" />
+		<script src="js/zepto.min.js"></script>
+		<script type="application/javascript"  src="js/hkJS.js"></script>
+	</head>
+
+	<body>
+		<div class="mui-page-content payment Hcenter">
+			<div id="slider" class="mui-slider">
+				<div class="mui-slider-group mui-slider-loop">
+					<!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+					<div class="mui-slider-item">
+						<a href="#">
+							<img src="./img/crown1.png">
+							<p class="mui-slider-title">尊贵身份标识</p>
+						</a>
+					</div>
+					<div class="mui-slider-item mui-slider-item-duplicate">
+						<a href="#">
+							<img src="./img/identify1.png">
+							<p class="mui-slider-title">识别优质对象</p>
+						</a>
+					</div>
+					<div class="mui-slider-item mui-slider-item-duplicate">
+						<a href="#">
+							<img src="./img/ico_UsrPrivacy@2x.png">
+							<p class="mui-slider-title">更高隐私权限</p>
+						</a>
+					</div>
+					<div class="mui-slider-item">
+						<a href="#">
+							<img src="./img/ico-LiveChat@2x.png">
+							<p class="mui-slider-title">直接可发信息</p>
+						</a>
+					</div>
+					<!-- <div class="mui-slider-item">
+						<a href="#">
+							<img src="./img/ico_ReadTips@2x.png">
+							<p class="mui-slider-title">获知发信状态</p>
+						</a>
+					</div> -->
+					<div class="mui-slider-item">
+						<a href="#">
+							<img src="./img/ico_exhibition@2x.png">
+							<p class="mui-slider-title">8倍展示机会</p>
+						</a>
+					</div>
+					<div class="mui-slider-item">
+						<a href="#">
+							<img src="./img/crown1.png">
+							<p class="mui-slider-title">尊贵身份标识</p>
+						</a>
+					</div>
+					<!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+					<div class="mui-slider-item mui-slider-item-duplicate">
+						<a href="#">
+							<img src="./img/identify1.png">
+							<p class="mui-slider-title">识别优质对象</p>
+						</a>
+					</div>
+				</div>
+				<div class="mui-slider-indicator mui-text-right">
+					<div class="mui-indicator mui-active"></div>
+					<div class="mui-indicator"></div>
+					<div class="mui-indicator"></div>
+					<div class="mui-indicator"></div>
+					<div class="mui-indicator"></div>
+					<!-- <div class="mui-indicator"></div> -->
+				</div>
+			</div>
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell">
+					&nbsp;
+				</li>
+				<li class="mui-table-view-cell">
+					<img class="honorable-logo" src="./img/pi_HonourableMember.png" alt="">
+					尊贵会员7天
+					<span class="mui-badge mui-badge-orange">￥&nbsp;<span data-meal='meal_a' class="money">98.00</span></span>
+				</li>
+				<li class="mui-table-view-cell">
+				<img src="./img/pic_GoldMember.png" alt="">
+					黄金会员14天
+					<span class="mui-badge mui-badge-orange">￥&nbsp;<span data-meal='meal_b' class="money">188.00</span></span>
+				</li>
+				<li class="mui-table-view-cell">
+					<img src="./img/pic_DiamondMember.png" alt="">
+					<!-- 28天<span style="font-size:12px;color:#ce3a4d">(已优惠￥154元,赠送1个会员邀请码)</span> -->
+					钻石会员28天<span style="font-size:12px;color:#ce3a4d">(送1个邀请码)</span>
+					<span class="mui-badge mui-badge-orange">￥&nbsp;<span data-meal='meal_c' class="money">368.00</span></span>
+				</li>
+				<li class="mui-table-view-cell">
+					<img src="./img/pic_CrownMember.png" alt="">
+					<!-- 28天<span style="font-size:12px;color:#ce3a4d">(已优惠￥154元,赠送1个会员邀请码)</span> -->
+					至尊皇冠会员90天<span style="font-size:12px;color:#ce3a4d">(送3个邀请码)</span>
+					<span class="mui-badge mui-badge-orange">￥&nbsp;<span data-meal='meal_d' class="money">888.00</span></span>
+				</li>
+			</ul>
+		</div>
+
+		<script src="js/mui.min.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			$(function(){
+				getInterface().initDataWithArray("#FFFFFF","back","升级会员","","","#333333","","");
+			})
+			function leftBtnClick(){
+				getInterface().leftBtnClick();
+			}
+
+			$('.payment ').on('tap','.mui-table-view-cell',function(){
+				var money = $(this).find('.money').text();
+				var mealSta = $(this).find('.money').attr('data-meal');
+				getInterface().pay_alert(money,1,mealSta);
+			})
+
+			function return_paySure(data){
+				if(data.ret==1){
+					localStorage.setItem('payState',1);
+					setTimeout(function(){
+	                    getInterface().leftBtnClick();
+	                },1500)
+				}
+			}
+		</script>
+	</body>
+
+</html>

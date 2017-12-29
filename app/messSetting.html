@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>消息提醒设置</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link href="css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="css/style.css" />
+	<script src="js/zepto.min.js"></script>
+	<script src="js/bbmis.js"></script>
+	<script type="application/javascript"  src="js/hkJS.js"></script>
+</head>
+
+<body>
+	<!--页面主内容区开始-->
+	<div class="mui-page-content myProfile">
+		<div class="mui-scroll">
+			<ul class="mui-table-view">
+
+				<li class="mui-table-view-cell">
+					活动推送
+					<div class="mui-switch mui-active">
+					 	<div class="mui-switch-handle"></div>
+					</div>
+				</li>
+				<li class="mui-table-view-cell" id="hiddenSurface">
+					用户消息
+					<div class="mui-switch mui-active">
+					 	<div class="mui-switch-handle"></div>
+					</div>
+				</li>
+				<li class="mui-table-view-cell" id="hiddenAtten">
+					附件推荐
+					<div class="mui-switch mui-active">
+					 	<div class="mui-switch-handle"></div>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<!--页面主内容区结束-->
+
+<script src="js/mui.min.js"></script>
+<script src="js/mui.view.js "></script>
+<script type="text/javascript">
+	mui.init();
+	$(function(){
+		getInterface().initDataWithArray("#FFFFFF","back","消息提醒设置","","","#333333","","");
+	})
+	function leftBtnClick(){
+		getInterface().leftBtnClick();
+	}
+
+
+</script>
+</body>
+
+</html>
